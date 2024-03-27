@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
+import 'package:tracker/movie_page.dart';
 import 'fetch_data.dart';
 import 'dart:convert';
 import 'data_structure.dart';
-import 'search.dart';
+import 'search_page.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 // 这里使用了GetX状态库，不然无限滚动实现不了，太难了
 class Controller extends GetxController {
@@ -70,8 +72,8 @@ class DiscoverPage extends StatelessWidget {
           SearchBar(
             hintText: 'Enter your search query',
             leading: Icon(Icons.search),
-            onTap: () async {
-              Get.to(SearchBarView(),transition: Transition.fade);
+            onTap: () {
+              Get.to(SearchBarView(), transition: Transition.fade);
             },
           ), // 在这里添加你的SearchBar组件
           Expanded(
@@ -134,36 +136,54 @@ class MovieCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 3,
-      margin: const EdgeInsets.all(8),
-      child: ListTile(
-        contentPadding: EdgeInsets.all(10),
-        leading: Container(
-          width: 80,
-          height: 120,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(
-                  'https://image.tmdb.org/t/p/w500/${movie.posterPath}'),
-              fit: BoxFit.cover,
+    return GestureDetector(
+      // 点击就导航到MoviePage
+      onTap: () {
+        Get.to(MoviePage(movie: movie),transition: Transition.fadeIn);
+      },
+      // 一个电影美化过的卡片
+      child: Card(
+        elevation: 10, // 抬起的阴影
+        clipBehavior: Clip.antiAlias, // 设置抗锯齿
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+        ), // 设置圆角
+        margin: const EdgeInsets.all(8),
+        child: Stack(
+          textDirection: TextDirection.rtl,
+          fit: StackFit.loose,
+          alignment: Alignment.bottomLeft,
+          children: <Widget>[
+            // 获取网络图片并缓存，
+            CachedNetworkImage(
+              imageUrl: "https://image.tmdb.org/t/p/w500/${movie.posterPath}",
+              progressIndicatorBuilder: (context, url, downloadProgress) =>
+                  CircularProgressIndicator(value: downloadProgress.progress),
+              errorWidget: (context, url, error) => Icon(Icons.error),
             ),
-          ),
-        ),
-        title: Text(
-          movie.title,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '上映日期: ${movie.releaseDate}',
-              style: TextStyle(fontSize: 14),
-            ),
-            Text(
-              'TMDB评分: ${movie.voteAverage} (${movie.voteCount})',
-              style: TextStyle(fontSize: 14),
+            Container(
+              padding: EdgeInsets.fromLTRB(5, 50, 5, 10),
+              // 设置阴影
+              alignment: Alignment.bottomCenter,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.transparent, Colors.black.withOpacity(0.9)],
+                ),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    movie.title,
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                  Text(
+                    'TMDB评分：${movie.voteAverage} (${movie.voteCount})',
+                    style: TextStyle(color: Colors.white, fontSize: 10),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

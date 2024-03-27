@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tracker/fetch_data.dart';
 import 'data_structure.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
