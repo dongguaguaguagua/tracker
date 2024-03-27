@@ -3,6 +3,8 @@ import 'data_structure.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'movie_page.dart';
 
 class SearchBarView extends StatefulWidget {
   @override
@@ -58,13 +60,54 @@ class _SearchBarViewState extends State<SearchBarView> {
             child: ListView.builder(
               itemCount: _searchResults.length,
               itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(_searchResults[index].title),
-                );
+                return MovieListCard(movie: _searchResults[index]);
               },
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class MovieListCard extends StatelessWidget {
+  SingleMovie movie;
+  MovieListCard({super.key, required this.movie});
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Get.to(MoviePage(movie: movie), transition: Transition.fadeIn);
+      },
+      child: Card(
+        elevation: 3,
+        child: ListTile(
+          leading: Container(
+            child: CachedNetworkImage(
+              imageUrl: "https://image.tmdb.org/t/p/w500/${movie.posterPath}",
+              progressIndicatorBuilder: (context, url, downloadProgress) =>
+                  CircularProgressIndicator(value: downloadProgress.progress),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+            ),
+          ),
+          title: Text(
+            movie.title,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '上映日期: ${movie.releaseDate}',
+                style: TextStyle(fontSize: 14),
+              ),
+              Text(
+                'TMDB评分: ${movie.voteAverage} (${movie.voteCount})',
+                style: TextStyle(fontSize: 14),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
