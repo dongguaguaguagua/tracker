@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'tab_index.dart';
-import 'package:provider/provider.dart';
 import 'global_var.dart';
+import 'package:get/get.dart';
 
 void main() {
   runApp(
@@ -19,7 +19,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    // 原来是MaterialApp，现在用了GetX，变成了GetMaterialApp
+    return GetMaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         // 全局颜色定义
