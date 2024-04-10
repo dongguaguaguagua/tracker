@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'home_page.dart';
 import 'settings_page.dart';
 import 'discover_page.dart';
+import 'my_page.dart';
 import 'package:provider/provider.dart';
 
 // 底栏tab的定义页面
@@ -25,12 +26,17 @@ class IndexPage extends StatefulWidget {
         icon: Icon(Icons.settings),
         label: '设置',
       ),
+      const BottomNavigationBarItem(
+        icon: Icon(Icons.person),
+        label:'我的',
+      )
     ];
     // 页面列表，注意要按照上面的顺序排
     final List tabBodies = [
       HomePage(),
       DiscoverPage(),
       SettingsPage(),
+      MyPage(),
     ];
 
     int currentIndex = 0;
