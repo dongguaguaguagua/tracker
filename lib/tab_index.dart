@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tracker/statistic_page.dart';
 import 'home_page.dart';
 import 'settings_page.dart';
 import 'discover_page.dart';
@@ -22,6 +23,10 @@ class IndexPage extends StatefulWidget {
         label: '发现',
       ),
       const BottomNavigationBarItem(
+        icon: Icon(Icons.bar_chart),
+        label: '统计',
+      ),
+      const BottomNavigationBarItem(
         icon: Icon(Icons.settings),
         label: '设置',
       ),
@@ -30,6 +35,7 @@ class IndexPage extends StatefulWidget {
     final List tabBodies = [
       HomePage(),
       DiscoverPage(),
+      StatisticPage(),
       SettingsPage(),
     ];
 

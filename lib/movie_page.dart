@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
+import 'package:tracker/database.dart';
 import 'fetch_data.dart';
 import 'dart:convert';
 import 'data_structure.dart';
@@ -30,6 +31,10 @@ class MoviePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                ElevatedButton(
+                  onPressed: addWatchedMedia,
+                  child: const Text('Watched'),
+                ),
                 // 电影图片
                 CachedNetworkImage(
                   imageUrl:
@@ -59,5 +64,22 @@ class MoviePage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void addWatchedMedia() async {
+    final media = MyMedia(
+        tmdbId: movie.id.toString(),
+        mediaType: "movie",
+        wantToWatchDate: null,
+        watchedDate: DateTime.now(),
+        browseDate: DateTime.now(),
+        searchDate: null,
+        watchStatus: "watched",
+        watchTimes: 1,
+        isOnShortVideo: false,
+        myRating: 5,
+        myReview: "myReview");
+
+    await MediaDatabase.instance.create(media);
   }
 }

@@ -1,3 +1,3 @@
 # tracker
 
-![demo](/Users/huzongyu/IdeaProjects/tracker/img/demo.gif)
+![demo](./img/demo.gif)

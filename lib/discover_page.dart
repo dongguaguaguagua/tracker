@@ -75,7 +75,7 @@ class DiscoverPage extends StatelessWidget {
             onTap: () {
               Get.to(SearchBarView(), transition: Transition.fade);
             },
-          ), // 在这里添加你的SearchBar组件
+          ),
           Expanded(
             child: GetBuilder<Controller>(
               init: Controller(),
