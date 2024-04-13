@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:tracker/data_structure.dart';
+import 'package:tracker/utils/data_structure.dart';
 
 const String mediaTable = 'medias';
 

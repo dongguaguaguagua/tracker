@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tracker/data_structure.dart';
-import 'database.dart';
+import 'package:tracker/utils/data_structure.dart';
+import '../utils/database.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

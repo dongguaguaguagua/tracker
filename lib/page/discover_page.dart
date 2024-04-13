@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
-import 'package:tracker/movie_page.dart';
-import 'fetch_data.dart';
+import 'package:tracker/widgets/movie_page.dart';
+import '../utils/fetch_data.dart';
 import 'dart:convert';
-import 'data_structure.dart';
-import 'search_page.dart';
+import '../utils/data_structure.dart';
+import '../widgets/search_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 // 这里使用了GetX状态库，不然无限滚动实现不了，太难了
