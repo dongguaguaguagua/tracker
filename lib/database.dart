@@ -5,7 +5,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:tracker/data_structure.dart';
 
-final String mediaTable = 'medias';
+const String mediaTable = 'medias';
 
 class MediaDatabase {
   static final MediaDatabase instance = MediaDatabase._init();
@@ -74,7 +74,7 @@ CREATE TABLE $mediaTable (
   Future<List<MyMedia>> readAllMedias() async {
     final db = await instance.database;
 
-    final orderBy = '${MediaFields.watchedDate} ASC';
+    const orderBy = '${MediaFields.watchedDate} ASC';
     final result =
         await db.rawQuery('SELECT * FROM $mediaTable ORDER BY $orderBy');
     return result.map((json) => MyMedia.fromJson(json)).toList();

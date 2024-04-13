@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'tab_index.dart';
-import 'global_var.dart';
 import 'package:get/get.dart';
 
 void main() {
   runApp(
     // ChangeNotifierProvider(
-      // create: (context) => GlobalVar(),
-      // child: const MyApp(),
+    // create: (context) => GlobalVar(),
+    // child: const MyApp(),
     const MyApp(),
     // ),
   );
@@ -32,6 +31,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
-

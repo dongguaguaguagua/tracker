@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tracker/data_structure.dart';
-import 'package:tracker/movie_page.dart';
 import 'database.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:get/get.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

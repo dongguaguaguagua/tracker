@@ -71,7 +71,7 @@ class DiscoverPage extends StatelessWidget {
         children: [
           SearchBar(
             hintText: 'Enter your search query',
-            leading: Icon(Icons.search),
+            leading: const Icon(Icons.search),
             onTap: () {
               Get.to(SearchBarView(), transition: Transition.fade);
             },
@@ -139,7 +139,7 @@ class MovieCard extends StatelessWidget {
     return GestureDetector(
       // 点击就导航到MoviePage
       onTap: () {
-        Get.to(MoviePage(movie: movie),transition: Transition.fadeIn);
+        Get.to(MoviePage(movie: movie), transition: Transition.fadeIn);
       },
       // 一个电影美化过的卡片
       child: Card(
@@ -159,10 +159,10 @@ class MovieCard extends StatelessWidget {
               imageUrl: "https://image.tmdb.org/t/p/w500/${movie.posterPath}",
               progressIndicatorBuilder: (context, url, downloadProgress) =>
                   CircularProgressIndicator(value: downloadProgress.progress),
-              errorWidget: (context, url, error) => Icon(Icons.error),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
             ),
             Container(
-              padding: EdgeInsets.fromLTRB(5, 50, 5, 10),
+              padding: const EdgeInsets.fromLTRB(5, 50, 5, 10),
               // 设置阴影
               alignment: Alignment.bottomCenter,
               decoration: BoxDecoration(
@@ -176,11 +176,11 @@ class MovieCard extends StatelessWidget {
                 children: [
                   Text(
                     movie.title,
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
                   ),
                   Text(
                     'TMDB评分：${movie.voteAverage} (${movie.voteCount})',
-                    style: TextStyle(color: Colors.white, fontSize: 10),
+                    style: const TextStyle(color: Colors.white, fontSize: 10),
                   ),
                 ],
               ),

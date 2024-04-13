@@ -1,7 +1,3 @@
-import 'dart:ffi';
-
-import 'package:uuid/uuid.dart';
-
 // 单个电影的数据结构
 class SingleMovie {
   bool adult;
