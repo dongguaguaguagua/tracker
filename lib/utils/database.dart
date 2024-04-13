@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' show join;
-import 'package:tracker/data_structure.dart';
+import 'package:tracker/utils/data_structure.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 const String mediaTable = 'medias';

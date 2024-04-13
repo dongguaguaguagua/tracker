@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tracker/data_structure.dart';
-import 'database.dart';
+import 'package:tracker/utils/data_structure.dart';
+import '/utils/database.dart';
 
 var date =DateTime(2024,1,1);
 MyMedia test_Media = MyMedia(
