@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:tracker/statistic_page.dart';
-import 'home_page.dart';
-import 'settings_page.dart';
-import 'discover_page.dart';
-import 'my_page.dart';
+import 'package:tracker/page/statistic_page.dart';
+import 'page/home_page.dart';
+import 'page/settings_page.dart';
+import 'page/discover_page.dart';
+import 'page/my_page.dart';
 import 'package:provider/provider.dart';
 
 // 底栏tab的定义页面

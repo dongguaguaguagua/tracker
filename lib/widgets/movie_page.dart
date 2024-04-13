@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
-import 'package:tracker/database.dart';
-import 'fetch_data.dart';
+import 'package:tracker/utils/database.dart';
+import '../utils/fetch_data.dart';
 import 'dart:convert';
-import 'data_structure.dart';
+import '../utils/data_structure.dart';
 import 'search_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
