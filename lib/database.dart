@@ -1,31 +1,36 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart' show join;
 import 'package:tracker/data_structure.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 const String mediaTable = 'medias';
 
 class MediaDatabase {
+
+  MediaDatabase._init();
   static final MediaDatabase instance = MediaDatabase._init();
 
   static Database? _database;
-
-  MediaDatabase._init();
-
   Future<Database> get database async {
     if (_database != null) return _database!;
-
     _database = await _initDB('media.db');
     return _database!;
   }
 
   Future<Database> _initDB(String filePath) async {
-    final dbPath = await getDatabasesPath();
+    sqfliteFfiInit();
+    final dbPath = await databaseFactory.getDatabasesPath();
     final path = join(dbPath, filePath);
     print(path);
-    return await openDatabase(path, version: 1, onCreate: _createDB);
+    return await databaseFactory.openDatabase(
+        path,
+        options: OpenDatabaseOptions(
+          version: 1,
+          onCreate: _createDB,
+        ),
+    );
   }
 
   Future _createDB(Database db, int version) async {

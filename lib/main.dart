@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'tab_index.dart';
 import 'package:get/get.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
+  databaseFactory = databaseFactoryFfi;
   runApp(
     // ChangeNotifierProvider(
     // create: (context) => GlobalVar(),
