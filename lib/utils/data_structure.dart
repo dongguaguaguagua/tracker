@@ -1,9 +1,34 @@
 // 单个电影的数据结构
+import 'dart:async';
+
+class SingleMovieField{//本地表与api调用共用key，尽量不要修改对应列名
+  static final List<String> values = [
+    /// Add all fields
+    tmdbid,adult,backdropPath,originalLanguage,originalTitle,
+    overview,popularity,posterPath,releaseDate,
+    title,voteAverage,voteCount,
+  ];
+  
+  static const String tmdbid = 'id';
+  static const String adult = 'adult';
+  static const String backdropPath = 'backdrop_path';
+  //static const String genreIds = 'genreIds';
+  static const String originalLanguage = 'original_language';
+  static const String originalTitle = 'original_title';
+  static const String overview = 'overview';
+  static const String popularity = 'popularity';
+  static const String posterPath = 'poster_path';
+  static const String releaseDate = 'release_date';
+  static const String title = 'title';
+  static const String voteAverage = 'vote_average';
+  static const String voteCount = 'vote_count';
+}
+
 class SingleMovie {
+  String tmdbid;//TMDBid
   bool adult;
   String backdropPath;
-  List<int> genreIds;
-  int id;
+  //List<int>? genreIds;
   String originalLanguage;
   String originalTitle;
   String overview;
@@ -11,15 +36,14 @@ class SingleMovie {
   String posterPath;
   String releaseDate;
   String title;
-  bool video;
   double voteAverage;
   int voteCount;
 
   SingleMovie({
+    required this.tmdbid,
     required this.adult,
     required this.backdropPath,
-    required this.genreIds,
-    required this.id,
+    //required this.genreIds,
     required this.originalLanguage,
     required this.originalTitle,
     required this.overview,
@@ -27,17 +51,16 @@ class SingleMovie {
     required this.posterPath,
     required this.releaseDate,
     required this.title,
-    required this.video,
     required this.voteAverage,
     required this.voteCount,
   });
   // 为了从json里面快速生成数据
   factory SingleMovie.fromJson(Map<String, dynamic> json) {
     return SingleMovie(
-      adult: json['adult'],
+      tmdbid: json['id'].toString(),
+      adult: json['adult'] == 1,
       backdropPath: json['backdrop_path'].toString(),
-      genreIds: List<int>.from(json['genre_ids']),
-      id: json['id'],
+      //genreIds: List<int>.from(json['genre_ids']),
       originalLanguage: json['original_language'].toString(),
       originalTitle: json['original_title'].toString(),
       overview: json['overview'].toString(),
@@ -45,41 +68,62 @@ class SingleMovie {
       posterPath: json['poster_path'].toString(),
       releaseDate: json['release_date'].toString(),
       title: json['title'].toString(),
-      video: json['video'],
       voteAverage: json['vote_average'].toDouble(),
       voteCount: json['vote_count'],
     );
   }
+
+  Map<String, Object?> toJson() => {
+        SingleMovieField.tmdbid: tmdbid,
+        SingleMovieField.adult: adult? 1 : 0,
+        SingleMovieField.backdropPath: backdropPath,
+        SingleMovieField.originalLanguage: originalLanguage,
+        SingleMovieField.originalTitle: originalTitle,
+        SingleMovieField.overview: overview,
+        SingleMovieField.popularity: popularity,
+        SingleMovieField.posterPath: posterPath,
+        SingleMovieField.releaseDate: releaseDate,
+        SingleMovieField.title: title,
+        SingleMovieField.voteAverage: voteAverage,
+        SingleMovieField.voteCount: voteCount,
+      };
+
+
+
+  // SingleMovie copy({
+  //   bool? adult,
+  //   String? backdropPath,
+  //   List<int>? genreIds,
+  //   int? id,
+  //   String? originalLanguage,
+  //   String? originalTitle,
+  //   String? overview,
+  //   double? popularity,
+  //   String? posterPath,
+  //   String? releaseDate,
+  //   String? title,
+  //   bool? video,
+  //   double? voteAverage,
+  //   int? voteCount,
+  // }) =>
+  //     SingleMovie(
+  //       adult: adult ?? this.adult,
+  //       backdropPath: backdropPath ?? this.backdropPath,
+  //       genreIds: genreIds ?? this.genreIds,
+  //       id: id ?? this.id,
+  //       originalLanguage: originalLanguage ?? this.originalLanguage,
+  //       originalTitle: originalTitle ?? this.originalTitle,
+  //       overview: overview ?? this.overview,
+  //       popularity: popularity ?? this.popularity,
+  //       posterPath: posterPath ?? this.posterPath,
+  //       releaseDate: releaseDate ?? this.releaseDate,
+  //       title: title ?? this.title,
+  //       video: video ?? this.video,
+  //       voteAverage: voteAverage ?? this.voteAverage,
+  //       voteCount: voteCount ?? this.voteCount,
+  //     );
+
 }
-//
-// class MyMedia {
-//   String id=const Uuid().v4();
-//   int tmDbId;
-//   String mediaType;   // 分为电影，电视剧和书
-//   DateTime wantToWatchDate;
-//   DateTime watchedDate;
-//   DateTime browseDate;
-//   DateTime searchDate;
-//   String watchStatus; // 分为想看，看过和在看
-//   int watchTimes; // 刷的次数
-//   bool isOnShortVideo;  // 是否在短视频上看的
-//   int myRating;
-//   String myReview;
-//
-//   MyMedia({
-//     required this.tmDbId,
-//     required this.mediaType,
-//     required this.wantToWatchDate,
-//     required this.watchedDate,
-//     required this.browseDate,
-//     required this.searchDate,
-//     required this.watchStatus,
-//     required this.watchTimes,
-//     required this.isOnShortVideo,
-// //     required this.myRating,
-//     required this.myReview,
-//   });
-// }
 
 class MediaFields {
   static final List<String> values = [

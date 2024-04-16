@@ -31,10 +31,21 @@ class MyPage extends StatelessWidget {
           ),
           ElevatedButton(
               onPressed: (){
-                var db = MediaDatabase.instance;
-                db.create(test_Media);
+                final db = MediaDatabase.instance;
+                db.createMedia(test_Media);
               },
-              child: Text('进行插入操作'))
+              child: Text('进行插入操作')),
+          ElevatedButton(
+              onPressed: () async{
+                final db = MediaDatabase.instance;
+                final data = await db.readAllLocal();
+                for (final datum in data) {
+                  print('${datum.tmdbid},${datum.title},${datum.posterPath}');
+
+                }
+                
+              },
+              child: Text('输出从localdata表（本地存储所有用户收藏的电影信息）里的记录'))
         ],
       ),
     );

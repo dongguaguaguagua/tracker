@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:tracker/utils/database.dart';
-import '../utils/fetch_data.dart';
-import 'dart:convert';
 import '../utils/data_structure.dart';
-import 'search_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class MoviePage extends StatelessWidget {
@@ -68,18 +64,32 @@ class MoviePage extends StatelessWidget {
 
   void addWatchedMedia() async {
     final media = MyMedia(
-        tmdbId: movie.id.toString(),
-        mediaType: "movie",
-        wantToWatchDate: null,
-        watchedDate: DateTime.now(),
-        browseDate: DateTime.now(),
-        searchDate: null,
-        watchStatus: "watched",
-        watchTimes: 1,
-        isOnShortVideo: false,
-        myRating: 5,
-        myReview: "myReview");
+      tmdbId: movie.tmdbid,
+      mediaType: "movie",
+      wantToWatchDate: null,
+      watchedDate: DateTime.now(),
+      browseDate: DateTime.now(),
+      searchDate: null,
+      watchStatus: "watched",
+      watchTimes: 1,
+      isOnShortVideo: false,
+      myRating: 5,
+      myReview: "myReview");
+    final data = SingleMovie(
+      tmdbid: movie.tmdbid,
+      adult: movie.adult,
+      backdropPath: movie.backdropPath,
+      originalLanguage: movie.originalLanguage,
+      originalTitle: movie.originalTitle,
+      overview: movie.overview,
+      popularity: movie.popularity,
+      posterPath: movie.posterPath,
+      releaseDate: movie.releaseDate,
+      title: movie.title,
+      voteAverage: movie.voteAverage,
+      voteCount: movie.voteCount);
 
-    await MediaDatabase.instance.create(media);
+    await MediaDatabase.instance.createMedia(media);
+    await MediaDatabase.instance.createLocal(data);
   }
 }

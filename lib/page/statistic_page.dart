@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:tracker/utils/data_structure.dart';
+import 'package:tracker/utils/database.dart';
+
 
 class StatisticPage extends StatelessWidget {
   const StatisticPage({super.key});
+  
 
   @override
   //之后会有几个功能的分区，我先来负责一下
   //我先嫖了一个其中一个的功能模板，
   Widget build(BuildContext context) {
+    //List<SingleMovie> movies = getmovies();
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 1000,
@@ -53,7 +59,28 @@ class StatisticPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              Text('这里是电影ListViw<>'),
+              Center(
+                child: FutureBuilder(
+                  future: Future.value(MediaDatabase.instance.readAllLocal()), 
+                  builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot){
+                      if(snapshot.hasError){
+                        return const Icon(Icons.error, size:80);
+                      }
+                      if(snapshot.hasData){
+                        return Text('改成了futurebuilder');
+                      }
+                      return const CircularProgressIndicator();
+                    } 
+                  ),
+              )
+
+
+              // for (final movie in movies) MovieListItem(
+
+              // )
+
+
+
             ],
           ),
         ),
@@ -83,3 +110,22 @@ class _CustomClipper extends CustomClipper<Path> {
     return true;
   }
 }
+
+
+
+
+
+
+// Future<List<SingleMovie>> localmovies = MediaDatabase.instance.readAllLocal();
+
+
+
+// ListView.builder(
+//   itemCount: medias.length,
+//   itemBuilder: (context, index) {
+//     return ListTile(
+//       title: Text("tmdb ID:${medias[index].tmdbId}"),
+//       subtitle: Text(medias[index].watchedDate.toString()),
+//     );
+//   },
+// ),
