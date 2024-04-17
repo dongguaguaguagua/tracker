@@ -18,14 +18,14 @@ class Controller extends GetxController {
   var isLoading = false;
   int _page = 1;
 
-  void getMovieDataReady(){
-      movieData=cache_data.instance.MovieData;
+  void getMovieDataReady() {
+    movieData = cache_data.instance.MovieData;
   }
 
-  int movieDataLength(){
+  int movieDataLength() {
     update();
-    int moviedataLength=0;
-    moviedataLength=movieData.length+(isLoading ? 1 : 0);
+    int moviedataLength = 0;
+    moviedataLength = movieData.length + (isLoading ? 1 : 0);
     return moviedataLength;
   }
 
@@ -36,7 +36,7 @@ class Controller extends GetxController {
         !isLoading) {
       isLoading = true;
       update();
-      fetchMovieData(_page + 1).then((value) {
+      fetchDiscoverData(_page + 1).then((value) {
         // 新数据和旧数据的拼接
         movieData.addAll(value);
         // 增加新的页面
@@ -53,7 +53,7 @@ class Controller extends GetxController {
 
   @override
   // 这是页面一打开就会运行的函数
-  void onInit(){
+  void onInit() {
     // 初始化一些数据
     // String jsonStr = """
     // {

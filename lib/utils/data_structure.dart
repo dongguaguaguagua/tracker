@@ -1,14 +1,15 @@
 // 单个电影的数据结构
 import 'dart:async';
 
-class SingleMovieField{//本地表与api调用共用key，尽量不要修改对应列名
+class SingleMovieField {
+  //本地表与api调用共用key，尽量不要修改对应列名
   static final List<String> values = [
     /// Add all fields
-    tmdbid,adult,backdropPath,originalLanguage,originalTitle,
-    overview,popularity,posterPath,releaseDate,
-    title,voteAverage,voteCount,
+    tmdbid, adult, backdropPath, originalLanguage, originalTitle,
+    overview, popularity, posterPath, releaseDate,
+    title, voteAverage, voteCount,
   ];
-  
+
   static const String tmdbid = 'id';
   static const String adult = 'adult';
   static const String backdropPath = 'backdrop_path';
@@ -25,7 +26,7 @@ class SingleMovieField{//本地表与api调用共用key，尽量不要修改对�
 }
 
 class SingleMovie {
-  String tmdbid;//TMDBid
+  String tmdbid; //TMDBid
   bool adult;
   String backdropPath;
   //List<int>? genreIds;
@@ -75,7 +76,7 @@ class SingleMovie {
 
   Map<String, Object?> toJson() => {
         SingleMovieField.tmdbid: tmdbid,
-        SingleMovieField.adult: adult? 1 : 0,
+        SingleMovieField.adult: adult ? 1 : 0,
         SingleMovieField.backdropPath: backdropPath,
         SingleMovieField.originalLanguage: originalLanguage,
         SingleMovieField.originalTitle: originalTitle,
@@ -87,8 +88,6 @@ class SingleMovie {
         SingleMovieField.voteAverage: voteAverage,
         SingleMovieField.voteCount: voteCount,
       };
-
-
 
   // SingleMovie copy({
   //   bool? adult,
@@ -122,7 +121,57 @@ class SingleMovie {
   //       voteAverage: voteAverage ?? this.voteAverage,
   //       voteCount: voteCount ?? this.voteCount,
   //     );
+}
 
+class CollectionField {
+  static final List<String> values = [
+    /// Add all fields
+    id, name, posterPath, backdropPath,
+  ];
+
+  static const String id = '_id';
+  static const String name = 'name';
+  static const String posterPath = 'posterPath';
+  static const String backdropPath = 'backdropPath';
+}
+
+class Collection {
+  final int? id;
+  final String name;
+  final String posterPath;
+  final String backdropPath;
+  const Collection({
+    required this.id,
+    required this.name,
+    required this.posterPath,
+    required this.backdropPath,
+  });
+  Collection copy({
+    int? id,
+    String? name,
+    String? posterPath,
+    String? backdropPath,
+  }) =>
+      Collection(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        posterPath: posterPath ?? this.posterPath,
+        backdropPath: backdropPath ?? this.backdropPath,
+      );
+
+  static Collection fromJson(Map<String, Object?> json) => Collection(
+        id: json[MediaFields.id] as int?,
+        name: json[MediaFields.name] as String,
+        posterPath: json[MediaFields.posterPath] as String,
+        backdropPath: json[MediaFields.backdropPath] as String,
+      );
+
+  Map<String, Object?> toJson() => {
+        MediaFields.id: id,
+        MediaFields.name: name,
+        MediaFields.posterPath: posterPath,
+        MediaFields.backdropPath: backdropPath,
+      };
 }
 
 class MediaFields {
