@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:tracker/page/discover_page.dart';
 import 'package:tracker/utils/data_structure.dart';
 import 'package:tracker/utils/database.dart';
+import 'package:tracker/widgets/stats_MovieList.dart';
+import 'package:tracker/widgets/stats_screen';
 
 
 class StatisticPage extends StatelessWidget {
@@ -16,7 +19,7 @@ class StatisticPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 1000,
+        toolbarHeight: 100,
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         flexibleSpace: ClipPath(
@@ -24,10 +27,10 @@ class StatisticPage extends StatelessWidget {
           child: Container(
             height: 150,
             width: MediaQuery.of(context).size.width,
-            color: Color.fromARGB(255, 12, 77, 151),
+            color: Color.fromARGB(255, 6, 9, 103),
             child: Center(
               child: Text(
-                '日本🇯🇵',
+                '美国🇺🇸',
                 style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -39,52 +42,60 @@ class StatisticPage extends StatelessWidget {
       ),
       extendBodyBehindAppBar: true,
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 150),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              RichText(
-                text: TextSpan(
-                  style: Theme.of(context).textTheme.headlineSmall,
-                  children: [
-                    TextSpan(
-                      text: '收藏的电影🎬',
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge!
-                          .copyWith(fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              Center(
-                child: FutureBuilder(
-                  future: Future.value(MediaDatabase.instance.readAllLocal()), 
-                  builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot){
-                      if(snapshot.hasError){
-                        return const Icon(Icons.error, size:80);
-                      }
-                      if(snapshot.hasData){
-                        return Text('改成了futurebuilder');
-                      }
-                      return const CircularProgressIndicator();
-                    } 
+        child: FutureBuilder(
+          future: Future.value(MediaDatabase.instance.readAllLocal()), 
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot){
+            if(snapshot.hasError){
+              return const Icon(Icons.error, size:80);
+            }
+            if(snapshot.hasData){
+              return Container(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 150),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          style: Theme.of(context).textTheme.headlineSmall,
+                          children: [
+                            TextSpan(
+                              text: '你的观影记录：',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge!
+                                  .copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      for (final movie in snapshot.data) 
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MovieScreen(movie: movie),
+                              ),
+                            );
+                          },
+                          child: MovieListItem(
+                            imageUrl: "https://image.tmdb.org/t/p/w500/${movie.posterPath}",
+                            name: movie.title,
+                            information: '${movie.releaseDate} | ${movie.voteAverage}',
+                          ),
+                        ),
+                      
+                    ],
                   ),
-              )
-
-
-              // for (final movie in movies) MovieListItem(
-
-              // )
-
-
-
-            ],
-          ),
+                ),
+              );
+            }
+          return const CircularProgressIndicator();
+          }
         ),
-      ),
+      )  
     );
   }
 }
@@ -97,8 +108,8 @@ class _CustomClipper extends CustomClipper<Path> {
 
     var path = Path();
 
-    path.lineTo(0, height - 50);
-    path.quadraticBezierTo(width / 2, height, width, height - 50);
+    path.lineTo(0, height - 30);
+    path.quadraticBezierTo(width / 2, height*1.1, width, height - 30);
     path.lineTo(width, 0);
     path.close();
 
@@ -116,16 +127,20 @@ class _CustomClipper extends CustomClipper<Path> {
 
 
 
-// Future<List<SingleMovie>> localmovies = MediaDatabase.instance.readAllLocal();
+
+//extract a widget
+// class BigCard extends StatelessWidget {
+//   const BigCard({
+//     super.key,
+//     required this.pair,
+//   });
+
+//   final WordPair pair;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Text(pair.asLowerCase);
+//   }
+// }
 
 
-
-// ListView.builder(
-//   itemCount: medias.length,
-//   itemBuilder: (context, index) {
-//     return ListTile(
-//       title: Text("tmdb ID:${medias[index].tmdbId}"),
-//       subtitle: Text(medias[index].watchedDate.toString()),
-//     );
-//   },
-// ),
