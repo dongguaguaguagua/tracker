@@ -6,8 +6,8 @@ import 'package:tracker/utils/data_structure.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 //表名
-const String mediaTable = 'medias';
-const String localTable = 'localdata';
+const String mediaTable = 'myMedia';
+const String localTable = 'localData';
 
 class MediaDatabase {
 

@@ -73,12 +73,13 @@ class StatisticPage extends StatelessWidget {
                       for (final movie in snapshot.data) 
                         InkWell(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => MovieScreen(movie: movie),
-                              ),
-                            );
+                            print('a');
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => MovieScreen(movie: movie),
+                            //   ),
+                            // );
                           },
                           child: MovieListItem(
                             imageUrl: "https://image.tmdb.org/t/p/w500/${movie.posterPath}",
