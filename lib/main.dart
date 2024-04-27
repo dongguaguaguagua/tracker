@@ -3,10 +3,13 @@ import 'tab_index.dart';
 import 'package:get/get.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'cache_data/cachedata.dart';
+import 'utils/database.dart';
+import 'utils/data_structure.dart';
+
 
 void main() async{
   databaseFactory = databaseFactoryFfi;
-  await cache_data.instance.init_movie_data();
+  await cache_data.getInstance().initMovieData();
   runApp(
     // ChangeNotifierProvider(
     // create: (context) => GlobalVar(),

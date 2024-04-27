@@ -1,20 +1,23 @@
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' show join;
 import 'package:tracker/utils/data_structure.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 //表名
-const String mediaTable = 'myMedia';
-const String localTable = 'localData';
+const String myTable = 'myTable';
+const String infoTable = 'infoTable';
+const String genreTable = 'genreTable';
 
-class MediaDatabase {
+class ProjectDatabase {
+  ProjectDatabase._init();
 
-  MediaDatabase._init();
-  static final MediaDatabase instance = MediaDatabase._init();
+  factory ProjectDatabase() => _instance;
+  static final ProjectDatabase _instance = ProjectDatabase._init();
 
   static Database? _database;
+
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDB('media.db');
@@ -25,15 +28,22 @@ class MediaDatabase {
     sqfliteFfiInit();
     final dbPath = await databaseFactory.getDatabasesPath();
     final path = join(dbPath, filePath);
-    print(path);
     return await databaseFactory.openDatabase(
-        path,
-        options: OpenDatabaseOptions(
-          version: 1,
-          onCreate: _createDB,
-        ),
+      path,
+      options: OpenDatabaseOptions(
+        version: 1,
+        onCreate: _createDB,
+      ),
     );
   }
+
+  Table genreTable = Table(tableName: 'genreTable');
+  Table singleMovieTable = Table(tableName: 'infoTable');
+  //Table collectionInsTable = Table(tableName: 'collections', dbHelper: _instance);
+  //Table collectionTable = Table(tableName: 'collectionTable', dbHelper: _instance);
+  //Table myCollectionInsTable = Table(tableName: 'myCollections', dbHelper: _instance);
+  //Table myCollectionTable = Table(tableName: 'myCollectionTable', dbHelper: _instance);
+  //Table myMediaTable = Table(tableName: 'myTable', dbHelper: _instance);
 
   //以上是建立数据库media.db
   Future _createDB(Database db, int version) async {
@@ -43,59 +53,51 @@ class MediaDatabase {
     const textType = 'TEXT';
     const boolType = 'BOOLEAN';
 
-  //在这里加入多个表的创建sql语句,并定义相应的const量
-  //medias表
-    await db.execute('''
-CREATE TABLE $mediaTable ( 
-  ${MediaFields.id} $idType, 
-  ${MediaFields.mediaType} $textType,
-  ${MediaFields.tmdbId} $textType,
-  ${MediaFields.watchTimes} $intType,
-  ${MediaFields.isOnShortVideo} $boolType,
-  ${MediaFields.watchedDate} $textType,
-  ${MediaFields.wantToWatchDate} $textType,
-  ${MediaFields.browseDate} $textType,
-  ${MediaFields.searchDate} $textType,
-  ${MediaFields.watchStatus} $textType,
-  ${MediaFields.myReview} $textType,
-  ${MediaFields.myRating} $intType
-  )
-''');
+    //infoTable表
+    await db.execute(SingleMovie.createSQL);
 
-  //localdata表——————————》Todo:还需要加tmdbid的外键约束重构一下
-    await db.execute('''
-CREATE TABLE $localTable ( 
-  ${SingleMovieField.tmdbid} $intType, 
-  ${SingleMovieField.adult} $boolType, 
-  ${SingleMovieField.backdropPath} $textType, 
-  ${SingleMovieField.originalLanguage} $textType, 
-  ${SingleMovieField.originalTitle} $textType, 
-  ${SingleMovieField.overview} $textType, 
-  ${SingleMovieField.popularity} $doubleType, 
-  ${SingleMovieField.posterPath} $textType, 
-  ${SingleMovieField.releaseDate} $textType, 
-  ${SingleMovieField.title} $textType, 
-  ${SingleMovieField.voteAverage} $doubleType, 
-  ${SingleMovieField.voteCount} $intType
-  )
-''');
+    //CollectionTable表
+    await db.execute(Collection.createSQL);
+
+    //myCollectionTable表
+    await db.execute(MyCollection.createSQL);
+
+    //myTable表
+    await db.execute(MyMedia.createSQL);
+
+    //genreTable表
+    await db.execute(Genre.createSQL);
+
+    //Collection, infoTable关系表
+    await db.execute(CollectionInstances.createSQL);
+
+    //MyCollection, MyTable关系表
+    await db.execute(MyCollectionInstance.createSQL);
+
+    //Genre, InfoTable关系表
+    await db.execute(GenreInfo.createSQL);
   }
 
   //为每个表、相对的数据结构类建立相应方法
-  //medias——》MyMedia类
-  //localdata——》SingleMovie类
+  //myTable-->MyMedia类 --> MM
+  //infoTable-->SingleMovie类 --> SI
+  //collectionTable --> Collection类 --> CO
+  //myCollectionTable -->MyCollection类 --> MC
+  //genreTable-->Genre类 --> GE
 
-  Future<MyMedia> createMedia(MyMedia media) async {
-    final db = await instance.database;
-    final id = await db.insert(mediaTable, media.toJson());
-    return media.copy(id: id);
+  Future<int> MM_add(MyMedia media) async {
+    if (media.id == 0) return 0;
+    final db = await _instance.database;
+    final id = await db.insert(myTable, media.toJson());
+    media.id = id;
+    return id;
   }
 
-  Future<MyMedia> readMedia(int id) async {
-    final db = await instance.database;
+  Future<MyMedia> MM_read_id(int id) async {
+    final db = await _instance.database;
 
     final maps = await db.query(
-      mediaTable,
+      myTable,
       columns: MediaFields.values,
       where: '${MediaFields.id} = ?',
       whereArgs: [id],
@@ -108,20 +110,20 @@ CREATE TABLE $localTable (
     }
   }
 
-  Future<List<MyMedia>> readAllMedias() async {
-    final db = await instance.database;
+  Future<List<MyMedia>> MM_read_all() async {
+    final db = await _instance.database;
 
     const orderBy = '${MediaFields.watchedDate} ASC';
     final result =
-        await db.rawQuery('SELECT * FROM $mediaTable ORDER BY $orderBy');
+        await db.rawQuery('SELECT * FROM $myTable ORDER BY $orderBy');
     return result.map((json) => MyMedia.fromJson(json)).toList();
   }
 
   Future<int> updateMedia(MyMedia media) async {
-    final db = await instance.database;
+    final db = await _instance.database;
 
     return db.update(
-      mediaTable,
+      myTable,
       media.toJson(),
       where: '${MediaFields.id} = ?',
       whereArgs: [media.id],
@@ -129,18 +131,19 @@ CREATE TABLE $localTable (
   }
 
   Future<int> deleteMedia(int id) async {
-    final db = await instance.database;
+    final db = await _instance.database;
     return await db.delete(
-      mediaTable,
+      myTable,
       where: '${MediaFields.id} = ?',
       whereArgs: [id],
     );
   }
 
-//localdata方法
+//localdata方fa
+
   Future<SingleMovie> createLocal(SingleMovie movie) async {
-    final db = await instance.database;
-    final id = await db.insert(localTable, movie.toJson());
+    final db = await _instance.database;
+    final id = await db.insert(infoTable, movie.toJson());
     return movie;
   }
 
@@ -162,11 +165,12 @@ CREATE TABLE $localTable (
   // }
 
   Future<List<SingleMovie>> readAllLocal() async {
-    final db = await instance.database;
+    final db = await _instance.database;
 
     const orderBy = '${SingleMovieField.voteAverage} DESC';
     final result =
-        await db.rawQuery('SELECT * FROM $localTable ORDER BY $orderBy');
+        await db.rawQuery('SELECT * FROM $infoTable ORDER BY $orderBy');
+    print(result.map((json) => SingleMovie.fromJson(json)).toList());
     return result.map((json) => SingleMovie.fromJson(json)).toList();
   }
 
@@ -181,7 +185,7 @@ CREATE TABLE $localTable (
   //   );
   // }
 
-  // Future<int> deleteLocal(int id) async {
+  // Future<int> deeLocal(int id) async {
   //   final db = await instance.database;
   //   return await db.delete(
   //     mediaTable,
@@ -190,13 +194,136 @@ CREATE TABLE $localTable (
   //   );
   // }
 
+  Future<dynamic> sudo(String sql) async {
+    final db = await _instance.database;
+    db.execute(sql);
+  }
 
+  Future sudoInsert(String sql) async{
+    final db = await _instance.database;
+    dynamic result = db.rawInsert(sql);
+    return result;
+  }
 
+  Future<List<Map<String, Object?>>> sudoQuery(String sql) async{
+    final db = await _instance.database;
+    dynamic result = db.rawQuery(sql);
+    return result;
+  }
 
+  Future<int> sudoDelete(String sql) async{
+    final db = await _instance.database;
+    dynamic result = db.rawDelete(sql);
+    return result;
+  }
 
+  Future<int> sudoUpdate(String sql) async{
+    final db = await _instance.database;
+    dynamic result = db.rawUpdate(sql);
+    return result;
+  }
 
   Future close() async {
-    final db = await instance.database;
+    final db = await _instance.database;
     db.close();
+  }
+}
+
+class Table {
+  final String tableName;
+
+  Table({
+    required this.tableName,
+  });
+
+  Future<List<dynamic>> magic(dynamic ins) async {
+    Database db = await ProjectDatabase().database;
+    //genreIns中没有的参数
+    List<String> outList = ['id'];
+    //genreIns中有的参数
+    List<Object> inList = [];
+    String where = '';
+    String whereAll = '';
+    List<dynamic> allWhereArgs = [];
+    Map originalJson = ins.toJson();
+    originalJson.remove('id');
+    originalJson.forEach((key, value) {
+      whereAll += 'and $key = ? ';
+      allWhereArgs.add(value);
+      if (value == null) {
+        outList.add(key);
+      } else {
+        inList.add(value);
+        where += 'and $key = ? ';
+      }
+    });
+    whereAll = whereAll.substring(4);
+    if (inList.isNotEmpty) where = where.substring(4);
+    List<dynamic> allIns = [];
+    if(inList.isEmpty){
+      var answers = await db.rawQuery('SELECT * FROM $tableName');
+      print(answers.length);
+      for(var answer in answers){
+        print('1');
+        print(answer);
+        var insCopy = ins;
+        print(insCopy.toJson());
+        insCopy.addJson(answer);
+        print(insCopy.toJson());
+        allIns.add(insCopy);
+      }
+      return allIns;
+    }
+    if (outList.length >= 2) {
+      var answers = await db.query(
+        tableName,
+        distinct: false,
+        columns: outList,
+        where: where,
+        whereArgs: inList,
+      );
+      for (var answer in answers) {
+        var insCopy = ins;
+        insCopy.addJson(answer);
+        allIns.add(insCopy);
+      }
+      return allIns;
+    } else {
+      var temp = await db.query(
+        tableName,
+        columns: ['id'],
+        where: whereAll,
+        whereArgs: allWhereArgs,
+      );
+      if (temp.isNotEmpty && ins.id == null) {
+        var state = ins;
+        state.id = -1;
+        allIns.add(state);
+        return allIns;
+      }
+      if (temp.isNotEmpty && ins.id != null) {
+        await db.delete(
+          tableName,
+          where: whereAll,
+          whereArgs: allWhereArgs,
+        );
+        var state = ins;
+        state.id = -2;
+        allIns.add(state);
+        return allIns;
+      }
+      await db.insert(tableName, originalJson as Map<String, Object?>);
+      temp = await db.query(
+        tableName,
+        columns: ['id'],
+        where: whereAll,
+        whereArgs: allWhereArgs,
+      );
+      ins.addJson(temp[0]);
+      var state = ins;
+      state.id = -3;
+      allIns.add(state);
+      return allIns;
+    }
   }
 }

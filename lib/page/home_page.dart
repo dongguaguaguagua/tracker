@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
 
   Future refreshMedias() async {
     setState(() => isLoading = true);
-    medias = await MediaDatabase.instance.readAllMedias();
+    medias = await ProjectDatabase().MM_read_all();
     setState(() => isLoading = false);
   }
 

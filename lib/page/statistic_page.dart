@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:tracker/page/discover_page.dart';
-import 'package:tracker/utils/data_structure.dart';
 import 'package:tracker/utils/database.dart';
 import 'package:tracker/widgets/stats_MovieList.dart';
-import 'package:tracker/widgets/stats_screen';
 
 
 class StatisticPage extends StatelessWidget {
@@ -27,7 +23,7 @@ class StatisticPage extends StatelessWidget {
           child: Container(
             height: 150,
             width: MediaQuery.of(context).size.width,
-            color: Color.fromARGB(255, 6, 9, 103),
+            color: const Color.fromARGB(255, 6, 9, 103),
             child: Center(
               child: Text(
                 '美国🇺🇸',
@@ -43,7 +39,7 @@ class StatisticPage extends StatelessWidget {
       extendBodyBehindAppBar: true,
       body: SingleChildScrollView(
         child: FutureBuilder(
-          future: Future.value(MediaDatabase.instance.readAllLocal()), 
+          future: Future.value(ProjectDatabase().readAllLocal()),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot){
             if(snapshot.hasError){
               return const Icon(Icons.error, size:80);

@@ -12,7 +12,7 @@ class MoviePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(movie.title),
+        title: Text(movie.title!),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -43,7 +43,7 @@ class MoviePage extends StatelessWidget {
                   height: 100,
                 ),
                 Text(
-                  movie.title,
+                  movie.title!,
                   style: const TextStyle(fontSize: 16),
                 ),
                 Text(
@@ -51,7 +51,7 @@ class MoviePage extends StatelessWidget {
                   style: const TextStyle(fontSize: 10),
                 ),
                 Text(
-                  movie.overview,
+                  movie.overview!,
                   style: const TextStyle(fontSize: 10),
                 ),
               ],
@@ -64,7 +64,7 @@ class MoviePage extends StatelessWidget {
 
   void addWatchedMedia() async {
     final media = MyMedia(
-      tmdbId: movie.tmdbid,
+      tmdbId: movie.tmdbId,
       mediaType: "movie",
       wantToWatchDate: null,
       watchedDate: DateTime.now(),
@@ -76,7 +76,7 @@ class MoviePage extends StatelessWidget {
       myRating: 5,
       myReview: "myReview");
     final data = SingleMovie(
-      tmdbid: movie.tmdbid,
+      tmdbId: movie.tmdbId,
       adult: movie.adult,
       backdropPath: movie.backdropPath,
       originalLanguage: movie.originalLanguage,
@@ -89,7 +89,7 @@ class MoviePage extends StatelessWidget {
       voteAverage: movie.voteAverage,
       voteCount: movie.voteCount);
 
-    await MediaDatabase.instance.createMedia(media);
-    await MediaDatabase.instance.createLocal(data);
+    await ProjectDatabase().MM_add(media);
+    await ProjectDatabase().createLocal(data);
   }
 }

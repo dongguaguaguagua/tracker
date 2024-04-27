@@ -93,7 +93,7 @@ class MovieListCard extends StatelessWidget {
             ),
           ),
           title: Text(
-            movie.title,
+            movie.title!,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           subtitle: Column(
