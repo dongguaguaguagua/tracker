@@ -139,7 +139,7 @@ class ProjectDatabase {
     );
   }
 
-//localdata方fa
+//localdata方法
 
   Future<SingleMovie> createLocal(SingleMovie movie) async {
     final db = await _instance.database;
@@ -166,12 +166,17 @@ class ProjectDatabase {
 
   Future<List<SingleMovie>> readAllLocal() async {
     final db = await _instance.database;
-
     const orderBy = '${SingleMovieField.voteAverage} DESC';
-    final result =
+    try {
+      final result =
         await db.rawQuery('SELECT * FROM $infoTable ORDER BY $orderBy');
-    print(result.map((json) => SingleMovie.fromJson(json)).toList());
-    return result.map((json) => SingleMovie.fromJson(json)).toList();
+      final a = result.map((json) => SingleMovie.fromJson(json)).toList();
+      return result.map((json) => SingleMovie.fromJson(json)).toList();
+    } 
+    catch (e) {
+      print('Error reading from the database: $e');
+      return [];
+    }
   }
 
   // Future<int> updateLocal(MyMedia media) async {

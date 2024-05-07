@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class MovieListItem extends StatelessWidget{
   final String imageUrl;
@@ -7,11 +9,11 @@ class MovieListItem extends StatelessWidget{
   final GlobalKey backgroundImageKey = GlobalKey();
 
   MovieListItem({
-    super.key,
+    Key? key,
     required this.imageUrl,
     required this.name,
     required this.information,
-    });
+    }) : super(key:key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +33,7 @@ class MovieListItem extends StatelessWidget{
               //   ),
               Flow(
                 delegate: _ParallaxFlowDelegate(
-                  scrollable: Scrollable.of(context),
+                  scrollable: Scrollable.of(context)!,
                   listItemContext: context,
                   backgroundImageKey: backgroundImageKey,
                 ),
@@ -52,7 +54,7 @@ class MovieListItem extends StatelessWidget{
                     ],
                     begin:Alignment.topCenter,
                     end:Alignment.bottomCenter,
-                    stops:const [0.6,0.95]),
+                    stops:[0.6,0.95]),
               ),),),
               Positioned(
                 left: 20,

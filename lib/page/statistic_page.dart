@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:tracker/page/discover_page.dart';
+import 'package:tracker/utils/data_structure.dart';
 import 'package:tracker/utils/database.dart';
 import 'package:tracker/widgets/stats_MovieList.dart';
-
+//import 'package:tracker/widgets/stats_screen';
+import 'package:tracker/examples.dart';
+import 'package:tracker/examples.dart';
 
 class StatisticPage extends StatelessWidget {
   const StatisticPage({super.key});
@@ -23,7 +27,7 @@ class StatisticPage extends StatelessWidget {
           child: Container(
             height: 150,
             width: MediaQuery.of(context).size.width,
-            color: const Color.fromARGB(255, 6, 9, 103),
+            color: Color.fromARGB(255, 6, 9, 103),
             child: Center(
               child: Text(
                 '美国🇺🇸',
@@ -39,7 +43,7 @@ class StatisticPage extends StatelessWidget {
       extendBodyBehindAppBar: true,
       body: SingleChildScrollView(
         child: FutureBuilder(
-          future: Future.value(ProjectDatabase().readAllLocal()),
+          future: ProjectDatabase().readAllLocal(), 
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot){
             if(snapshot.hasError){
               return const Icon(Icons.error, size:80);
@@ -69,7 +73,7 @@ class StatisticPage extends StatelessWidget {
                       for (final movie in snapshot.data) 
                         InkWell(
                           onTap: () {
-                            print('a');
+                            // print('a');
                             // Navigator.push(
                             //   context,
                             //   MaterialPageRoute(
