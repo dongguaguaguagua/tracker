@@ -44,6 +44,7 @@ class MoviePage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
+                          //const SizedBox(height: 10,),
                           Text(
                             movie.title!,
                             style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
@@ -58,7 +59,7 @@ class MoviePage extends StatelessWidget {
                               movie.overview!,
                               style: const TextStyle(fontSize: 13),
                               overflow: TextOverflow.ellipsis,
-                              maxLines: 5,
+                              maxLines: 6,
                             ),
                           ),
                         ],

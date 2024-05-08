@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:tracker/page/discover_page.dart';
-import 'package:tracker/utils/data_structure.dart';
 import 'package:tracker/utils/database.dart';
 import 'package:tracker/widgets/stats_MovieList.dart';
 //import 'package:tracker/widgets/stats_screen';
 import 'package:tracker/examples.dart';
-import 'package:tracker/examples.dart';
+import 'package:tracker/widgets/movie_page.dart';
 
 class StatisticPage extends StatelessWidget {
   const StatisticPage({super.key});
@@ -73,13 +71,14 @@ class StatisticPage extends StatelessWidget {
                       for (final movie in snapshot.data) 
                         InkWell(
                           onTap: () {
-                            // print('a');
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => MovieScreen(movie: movie),
-                            //   ),
-                            // );
+                            
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MoviePage(movie: movie),
+                              ),
+                            );
                           },
                           child: MovieListItem(
                             imageUrl: "https://image.tmdb.org/t/p/w500/${movie.posterPath}",
