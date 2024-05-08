@@ -12,7 +12,7 @@ class MoviePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(movie.title!),
+        //title: Text(movie.title!),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -20,46 +20,70 @@ class MoviePage extends StatelessWidget {
           },
         ),
       ),
-      body: ListView(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                ElevatedButton(
-                  onPressed: addWatchedMedia,
-                  child: const Text('Watched'),
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          children: <Widget>[
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  ClipRRect(
+                    //borderRadius: BorderRadius.circular(8),
+                    child: CachedNetworkImage(
+                      imageUrl: "https://image.tmdb.org/t/p/w500/${movie.posterPath}",
+                      progressIndicatorBuilder: (context, url, downloadProgress) =>
+                          CircularProgressIndicator(value: downloadProgress.progress),
+                      errorWidget: (context, url, error) => const Icon(Icons.error),
+                      width: 150,
+                      height: 200,
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            movie.title!,
+                            style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                              'TMDB评分：${movie.voteAverage} (${movie.voteCount})',
+                              style: const TextStyle(fontSize: 15, color: Colors.grey),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 15.0),
+                            child: Text(
+                              movie.overview!,
+                              style: const TextStyle(fontSize: 13),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            Padding(
+              padding: const EdgeInsets.only(top:25.0),
+              child: ElevatedButton(
+                onPressed: addWatchedMedia,
+                style: ElevatedButton.styleFrom(
+                  shadowColor: Colors.deepPurple, // 按钮颜色
+                  minimumSize: Size(double.infinity, 50), // 按钮大小
                 ),
-                // 电影图片
-                CachedNetworkImage(
-                  imageUrl:
-                      "https://image.tmdb.org/t/p/w500/${movie.posterPath}",
-                  progressIndicatorBuilder: (context, url, downloadProgress) =>
-                      CircularProgressIndicator(
-                          value: downloadProgress.progress),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
-                  width: 100,
-                  height: 100,
-                ),
-                Text(
-                  movie.title!,
-                  style: const TextStyle(fontSize: 16),
-                ),
-                Text(
-                  'TMDB评分：${movie.voteAverage} (${movie.voteCount})',
-                  style: const TextStyle(fontSize: 10),
-                ),
-                Text(
-                  movie.overview!,
-                  style: const TextStyle(fontSize: 10),
-                ),
-              ],
+                child: const Text('看过'),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
+
+    
   }
 
   void addWatchedMedia() async {
