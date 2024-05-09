@@ -5,6 +5,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'cache_data/cachedata.dart';
 
 
+
 void main() async{
   databaseFactory = databaseFactoryFfi;
   await cache_data.getInstance().initMovieData();

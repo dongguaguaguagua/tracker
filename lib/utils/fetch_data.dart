@@ -14,7 +14,7 @@ Future<List<SingleMovie>> fetchDiscoverData(int page) async {
     List<dynamic> jsonData = jsonDecode(jsonStr)['results'];
     // 将json转换成singleMovie列表
     List<SingleMovie> movies = jsonData
-        .map<SingleMovie>((item) => SingleMovie.fromJson(item))
+        .map<SingleMovie>((item) => SingleMovie.apiFromJson(item))
         .toList();
     return movies;
   } else {
@@ -34,7 +34,7 @@ Future<List<SingleMovie>> SearchMovieData(String query) async {
     List<dynamic> jsonData = jsonDecode(jsonStr)['results'];
     // 将json转换成singleMovie列表
     List<SingleMovie> movies = jsonData
-        .map<SingleMovie>((item) => SingleMovie.fromJson(item))
+        .map<SingleMovie>((item) => SingleMovie.apiFromJson(item))
         .toList();
     return movies;
   } else {

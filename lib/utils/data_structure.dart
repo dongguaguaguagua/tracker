@@ -1,8 +1,9 @@
 // 单个电影的数据结构
+import 'dart:ffi';
+
 import 'package:flutter/foundation.dart';
 
 class SingleMovieField {
-  //本地表与api调用共用key，尽量不要修改对应列名
   static final List<String> values = [
     /// Add all fields
     id, tmdbId, adult, backdropPath, originalLanguage,
@@ -13,17 +14,17 @@ class SingleMovieField {
   static const String id = 'id';
   static const String tmdbId = 'tmdbId';
   static const String adult = 'adult';
-  static const String backdropPath = 'backdrop_path';
+  static const String backdropPath = 'backdropPath';
 
-  static const String originalLanguage = 'original_language';
-  static const String originalTitle = 'original_title';
+  static const String originalLanguage = 'originalLanguage';
+  static const String originalTitle = 'originalTitle';
   static const String overview = 'overview';
   static const String popularity = 'popularity';
-  static const String posterPath = 'poster_path';
-  static const String releaseDate = 'release_date';
+  static const String posterPath = 'posterPath';
+  static const String releaseDate = 'releaseDate';
   static const String title = 'title';
-  static const String voteAverage = 'vote_average';
-  static const String voteCount = 'vote_count';
+  static const String voteAverage = 'voteAverage';
+  static const String voteCount = 'voteCount';
 }
 
 //InfoTable内容
@@ -60,26 +61,42 @@ class SingleMovie {
   static const String createSQL = """
 create table infoTable
 (
-    tmdbId           INTEGER,
+    tmdbId           INTEGER UNIQUE,
     adult            BOOLEAN,
-    backdrop_path     TEXT,
-    original_language TEXT,
-    original_title    TEXT,
+    backdropPath     TEXT,
+    originalLanguage TEXT,
+    originalTitle    TEXT,
     overview         TEXT,
     popularity       Double,
-    poster_path      TEXT,
-    release_date      TEXT,
+    posterPath      TEXT,
+    releaseDate      TEXT,
     title            TEXT,
-    vote_average      Double,
-    vote_count        INTEGER,
+    voteAverage      Double,
+    voteCount        INTEGER,
     id               integer
         constraint localTable_pk
             primary key autoincrement
 );
   """;
-
-  // 为了从json里面快速生成数据
+//从api转和从本地表转列名冲突，因此分开写
   factory SingleMovie.fromJson(Map<String, dynamic> json) {
+    return SingleMovie(
+      tmdbId: json['tmdbId'],
+      adult: json['adult'] == 1,
+      backdropPath: json['backdropPath'].toString(),
+      originalLanguage: json['originalLanguage'].toString(),
+      originalTitle: json['originalTitle'].toString(),
+      overview: json['overview'].toString(),
+      popularity: json['popularity'].toDouble(),
+      posterPath: json['posterPath'].toString(),
+      releaseDate: json['releaseDate'].toString(),
+      title: json['title'].toString(),
+      voteAverage: json['voteAverage'].toDouble(),
+      voteCount: json['voteCount'],
+    );
+  }
+  // 为了从api里的json转成List<SingleMovie>
+  factory SingleMovie.apiFromJson(Map<String, dynamic> json) {
     return SingleMovie(
       tmdbId: json['id'],
       adult: json['adult'] == 1,
@@ -95,6 +112,8 @@ create table infoTable
       voteCount: json['vote_count'],
     );
   }
+  
+
 
   Map<String, Object?> toJson() {
     int? adultCopy;
@@ -132,38 +151,7 @@ create table infoTable
     voteCount??=json[SingleMovieField.voteCount];
   }
 
-// SingleMovie copy({
-//   bool? adult,
-//   String? backdropPath,
-//   List<int>? genreIds,
-//   int? id,
-//   String? originalLanguage,
-//   String? originalTitle,
-//   String? overview,
-//   double? popularity,
-//   String? posterPath,
-//   String? releaseDate,
-//   String? title,
-//   bool? video,
-//   double? voteAverage,
-//   int? voteCount,
-// }) =>
-//     SingleMovie(
-//       adult: adult ?? this.adult,
-//       backdropPath: backdropPath ?? this.backdropPath,
-//       genreIds: genreIds ?? this.genreIds,
-//       id: id ?? this.id,
-//       originalLanguage: originalLanguage ?? this.originalLanguage,
-//       originalTitle: originalTitle ?? this.originalTitle,
-//       overview: overview ?? this.overview,
-//       popularity: popularity ?? this.popularity,
-//       posterPath: posterPath ?? this.posterPath,
-//       releaseDate: releaseDate ?? this.releaseDate,
-//       title: title ?? this.title,
-//       video: video ?? this.video,
-//       voteAverage: voteAverage ?? this.voteAverage,
-//       voteCount: voteCount ?? this.voteCount,
-//     );
+
 }
 
 class CollectionFields {
@@ -329,7 +317,7 @@ class MyMedia {
   String? watchStatus; // 分为想看，看过和在看
   int? watchTimes; // 刷的次数
   bool? isOnShortVideo; // 是否在短视频上看的
-  int? myRating; // 刷的次数
+  double? myRating; // 我的评价
   String? myReview;
 
   MyMedia({
@@ -353,7 +341,7 @@ class MyMedia {
     id              INTEGER
         primary key autoincrement,
     mediaType       TEXT,
-    tmdbId          INTEGER
+    tmdbId          INTEGER UNIQUE
         constraint actTable_infoTable_tmdbId_fk
             references infoTable (tmdbId),
     watchTimes      INTEGER,
@@ -364,7 +352,7 @@ class MyMedia {
     searchDate      TEXT,
     watchStatus     TEXT,
     myReview        TEXT,
-    myRating        INTEGER
+    myRating        DOUBLE
 );
   """;
 
@@ -379,7 +367,7 @@ class MyMedia {
     String? watchStatus,
     int? watchTimes,
     bool? isOnShortVideo,
-    int? myRating,
+    double? myRating,
     String? myReview,
   }) =>
       MyMedia(
@@ -416,7 +404,7 @@ class MyMedia {
         watchStatus: json[MediaFields.watchStatus] as String,
         watchTimes: json[MediaFields.watchTimes] as int,
         isOnShortVideo: json[MediaFields.isOnShortVideo] == 0,
-        myRating: json[MediaFields.myRating] as int,
+        myRating: json[MediaFields.myRating] as double,
         myReview: json[MediaFields.myReview] as String,
       );
 
@@ -438,7 +426,7 @@ class MyMedia {
     watchStatus??=json[MediaFields.watchStatus] as String;
     watchTimes??= json[MediaFields.watchTimes] as int;
     isOnShortVideo??=json[MediaFields.isOnShortVideo] == 0;
-    myRating??=json[MediaFields.myRating] as int;
+    myRating??=json[MediaFields.myRating] as double;
     myReview??= json[MediaFields.myReview] as String;
   }
 

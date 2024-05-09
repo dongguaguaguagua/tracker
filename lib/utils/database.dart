@@ -1,5 +1,5 @@
 import 'dart:async';
-
+//import 'dart:html';
 import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' show join;
 import 'package:tracker/utils/data_structure.dart';
@@ -88,9 +88,14 @@ class ProjectDatabase {
   Future<int> MM_add(MyMedia media) async {
     if (media.id == 0) return 0;
     final db = await _instance.database;
-    final id = await db.insert(myTable, media.toJson());
-    media.id = id;
-    return id;
+    try {
+        final id = await db.insert(myTable, media.toJson());
+        media.id = id;  // 确保更新对象的 id 属性
+        return id;
+    } catch (e) {
+        print('An error occurred while inserting a movie: $e');
+        return 0;// 抛出一个自定义的错误
+    }
   }
 
   Future<MyMedia> MM_read_id(int id) async {
@@ -139,12 +144,18 @@ class ProjectDatabase {
     );
   }
 
-//localdata方法
+//Infotable方法
 
-  Future<SingleMovie> createLocal(SingleMovie movie) async {
+  Future<SingleMovie> SI_add(SingleMovie movie) async {
     final db = await _instance.database;
-    final id = await db.insert(infoTable, movie.toJson());
-    return movie;
+    try {
+        final id = await db.insert(infoTable, movie.toJson());
+        movie.id = id;  // 确保更新对象的 id 属性
+        return movie;
+    } catch (e) {
+        print('An error occurred while inserting a movie: $e');
+        return movie;// 抛出一个自定义的错误
+    }
   }
 
   // Future<MyMedia> readLocal(int id) async {
@@ -164,7 +175,7 @@ class ProjectDatabase {
   //   }
   // }
 
-  Future<List<SingleMovie>> readAllLocal() async {
+  Future<List<SingleMovie>> SI_read_all() async {
     final db = await _instance.database;
     const orderBy = '${SingleMovieField.voteAverage} DESC';
     try {
@@ -178,6 +189,9 @@ class ProjectDatabase {
       return [];
     }
   }
+
+
+
 
   // Future<int> updateLocal(MyMedia media) async {
   //   final db = await instance.database;
@@ -204,13 +218,14 @@ class ProjectDatabase {
     db.execute(sql);
   }
 
+
   Future sudoInsert(String sql) async{
     final db = await _instance.database;
     dynamic result = db.rawInsert(sql);
     return result;
   }
 
-  Future<List<Map<String, Object?>>> sudoQuery(String sql) async{
+  Future<dynamic> sudoQuery(String sql) async{
     final db = await _instance.database;
     dynamic result = db.rawQuery(sql);
     return result;

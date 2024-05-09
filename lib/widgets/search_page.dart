@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'movie_page.dart';
+import 'package:tracker/page/discover_page.dart';
 
 class SearchBarView extends StatefulWidget {
   const SearchBarView({super.key});
@@ -30,7 +31,7 @@ class _SearchBarViewState extends State<SearchBarView> {
       setState(() {
         // 将json转换成singleMovie列表
         _searchResults = jsonData
-            .map<SingleMovie>((item) => SingleMovie.fromJson(item))
+            .map<SingleMovie>((item) => SingleMovie.apiFromJson(item))
             .toList();
       });
     } else {
@@ -79,6 +80,7 @@ class MovieListCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        Init_create_all_tables(movie);//创建改电影的所有表，到本地media.db,有些列初始为空，待update
         Get.to(MoviePage(movie: movie), transition: Transition.fadeIn);
       },
       child: Card(

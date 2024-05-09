@@ -4,6 +4,7 @@ import 'package:tracker/widgets/stats_MovieList.dart';
 //import 'package:tracker/widgets/stats_screen';
 import 'package:tracker/examples.dart';
 import 'package:tracker/widgets/movie_page.dart';
+import 'package:get/get.dart';
 
 class StatisticPage extends StatelessWidget {
   const StatisticPage({super.key});
@@ -41,7 +42,7 @@ class StatisticPage extends StatelessWidget {
       extendBodyBehindAppBar: true,
       body: SingleChildScrollView(
         child: FutureBuilder(
-          future: ProjectDatabase().readAllLocal(), 
+          future: ProjectDatabase().SI_read_all(), 
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot){
             if(snapshot.hasError){
               return const Icon(Icons.error, size:80);
@@ -69,17 +70,21 @@ class StatisticPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
                       for (final movie in snapshot.data) 
-                        InkWell(
-                          onTap: () {
-                            
-
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => MoviePage(movie: movie),
-                              ),
-                            );
+                        GestureDetector(
+                          // 点击就导航到MoviePage
+                          onTap: () async{
+                            Get.to(MoviePage(movie: movie), transition: Transition.fadeIn);
                           },
+                        
+                        // InkWell(
+                        //   onTap: () {
+                        //     Navigator.push(
+                        //       context,
+                        //       MaterialPageRoute(
+                        //         builder: (context) => MoviePage(movie: movie),
+                        //       ),
+                        //     );
+                        //   },
                           child: MovieListItem(
                             imageUrl: "https://image.tmdb.org/t/p/w500/${movie.posterPath}",
                             name: movie.title,

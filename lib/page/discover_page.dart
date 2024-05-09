@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
@@ -8,6 +7,7 @@ import '../utils/data_structure.dart';
 import '../widgets/search_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../cache_data/cachedata.dart';
+import '/utils/database.dart';
 
 // 这里使用了GetX状态库，不然无限滚动实现不了，太难了
 class Controller extends GetxController {
@@ -143,7 +143,10 @@ class MovieCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       // 点击就导航到MoviePage
-      onTap: () {
+      onTap: () async{
+        Init_create_all_tables(movie);//创建改电影的所有表，到本地media.db,有些列初始为空，待update
+        await Future.delayed(Duration(milliseconds: 100));//等0.1秒，保证Moviepage页面init前已经完成建表
+
         Get.to(MoviePage(movie: movie), transition: Transition.fadeIn);
       },
       // 一个电影美化过的卡片
@@ -195,4 +198,21 @@ class MovieCard extends StatelessWidget {
       ),
     );
   }
+}
+
+//点击时初始化创建myTable和infoTable，其他的在Moviepage.dart页面交互式建表即可
+Future<void> Init_create_all_tables(SingleMovie movie) async{
+  
+  final media = MyMedia(
+      tmdbId: movie.tmdbId,
+      mediaType: "movie",
+      watchStatus: "unwatched",
+      watchTimes: 0,
+      myRating: 1.0,
+      myReview: ''
+    );
+  
+  await ProjectDatabase().SI_add(movie);
+  await ProjectDatabase().MM_add(media);
+
 }
