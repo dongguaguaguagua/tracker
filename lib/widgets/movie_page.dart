@@ -1,6 +1,8 @@
 import 'dart:ffi' hide Size;
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart';
 import 'package:tracker/utils/database.dart';
@@ -75,130 +77,17 @@ class _MoviePageState extends State<MoviePage> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                ClipRRect(
-                  //borderRadius: BorderRadius.circular(8),
-                  child: CachedNetworkImage(
-                    imageUrl:
-                        "https://image.tmdb.org/t/p/w500/${widget.movie.posterPath}",
-                    progressIndicatorBuilder:
-                        (context, url, downloadProgress) =>
-                            CircularProgressIndicator(
-                                value: downloadProgress.progress),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
-                    width: 150,
-                    height: 200,
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        //const SizedBox(height: 10,),
-                        Text(
-                          widget.movie.title!,
-                          style: TextStyle(
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
-                              color: movieTextColor),
-                        ),
-                        Text(
-                          'TMDB评分：${widget.movie.voteAverage} (${widget.movie.voteCount})',
-                          style: TextStyle(
-                              fontSize: 15, color: movieRatingTextColor),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 15.0),
-                          child: Text(
-                            widget.movie.overview!,
-                            style:
-                                TextStyle(fontSize: 13, color: movieTextColor),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 6,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                moviePoster(),
+                movieMetaData(),
               ],
             ),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton.icon(
-                  icon: Icon(
-                    wanttoWatch
-                        ? Icons.favorite
-                        : Icons.favorite_border, // 根据状态切换图标
-                    color: Colors.purple, // 图标颜色
-                  ),
-                  label: const Text('想看'),
-                  onPressed: () async {
-                    //这是去获取最新的myTable表
-                    final result = await ProjectDatabase().sudoQuery(
-                        'select * from myTable where tmdbId=${widget.movie.tmdbId}');
-                    int id = result[0]['id'];
-                    MyMedia media = await ProjectDatabase().MM_read_id(id);
-                    setState(() {
-                      wanttoWatch = !wanttoWatch; // 切换状态
-                      alterwantoWatch(
-                          wanttoWatch, media); //将myTable里该电影记录观看日期进行修改
-                      //movie
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white, // 按钮颜色
-                    foregroundColor: Colors.deepPurple, // 文本颜色
-                    shadowColor: Colors.deepPurple, // 阴影颜色
-                    minimumSize: const Size(140, 50), // 按钮大小
-                  ),
-                ),
-                ElevatedButton.icon(
-                  icon: Icon(
-                    isWatched
-                        ? Icons.library_add_check
-                        : Icons.library_add_check_outlined, // 根据状态切换图标
-                    color: Colors.purple, // 图标颜色
-                  ),
-                  label: isWatched ? const Text('已看过') : const Text('看过'),
-                  onPressed: () async {
-                    movieSeenSheet(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white, // 按钮颜色
-                    foregroundColor: Colors.deepPurple, // 文本颜色
-                    shadowColor: Colors.deepPurple, // 阴影颜色
-                    minimumSize: const Size(140, 50), // 按钮大小
-                  ),
-                ),
-                ElevatedButton.icon(
-                  icon: Icon(
-                    inlist ? Icons.archive : Icons.archive_outlined, // 根据状态切换图标
-                    color: Colors.purple, // 图标颜色
-                  ),
-                  label: const Text('加入列表'),
-                  onPressed: () async {
-                    //这是去获取最新的myTable表
-                    final result = await ProjectDatabase().sudoQuery(
-                        'select * from myTable where tmdbId=${widget.movie.tmdbId}');
-                    int id = result[0]['id'];
-                    MyMedia media = await ProjectDatabase().MM_read_id(id);
-                    setState(() {
-                      inlist = !inlist;
-                      print('这里的豆列还需要进行部署');
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white, // 按钮颜色
-                    foregroundColor: Colors.deepPurple, // 文本颜色
-                    shadowColor: Colors.deepPurple, // 阴影颜色
-                    minimumSize: const Size(140, 50), // 按钮大小
-                  ),
-                ),
+                wantToWatchButton(),
+                watchedButton(context),
+                addToListButton(),
               ],
             ),
             const SizedBox(height: 40),
@@ -214,6 +103,107 @@ class _MoviePageState extends State<MoviePage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  // 电影海报
+  Widget moviePoster() {
+    return ClipRRect(
+      //borderRadius: BorderRadius.circular(8),
+      child: CachedNetworkImage(
+        imageUrl: "https://image.tmdb.org/t/p/w500/${widget.movie.posterPath}",
+        progressIndicatorBuilder: (context, url, downloadProgress) =>
+            CircularProgressIndicator(value: downloadProgress.progress),
+        errorWidget: (context, url, error) => const Icon(Icons.error),
+        width: 150,
+        height: 200,
+      ),
+    );
+  }
+
+  // 电影元数据widget
+  Widget movieMetaData() {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            //const SizedBox(height: 10,),
+            Text(
+              widget.movie.title!,
+              style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                  color: movieTextColor),
+            ),
+            Text(
+              'TMDB评分：${widget.movie.voteAverage} (${widget.movie.voteCount})',
+              style: TextStyle(fontSize: 15, color: movieRatingTextColor),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 15.0),
+              child: Text(
+                widget.movie.overview!,
+                style: TextStyle(fontSize: 13, color: movieTextColor),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 6,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // 想看按钮
+  Widget wantToWatchButton() {
+    return ElevatedButton.icon(
+      icon: Icon(
+        wanttoWatch ? Icons.favorite : Icons.favorite_border, // 根据状态切换图标
+        color: Colors.purple, // 图标颜色
+      ),
+      label: const Text('想看'),
+      onPressed: () async {
+        //这是去获取最新的myTable表
+        final result = await ProjectDatabase().sudoQuery(
+            'select * from myTable where tmdbId=${widget.movie.tmdbId}');
+        int id = result[0]['id'];
+        MyMedia media = await ProjectDatabase().MM_read_id(id);
+        setState(() {
+          wanttoWatch = !wanttoWatch; // 切换状态
+          alterwantoWatch(wanttoWatch, media); //将myTable里该电影记录观看日期进行修改
+          //movie
+        });
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white, // 按钮颜色
+        foregroundColor: Colors.deepPurple, // 文本颜色
+        shadowColor: Colors.deepPurple, // 阴影颜色
+        minimumSize: Size(140, 50), // 按钮大小
+      ),
+    );
+  }
+
+  // 看过按钮
+  Widget watchedButton(BuildContext context) {
+    return ElevatedButton.icon(
+      icon: Icon(
+        isWatched
+            ? Icons.library_add_check
+            : Icons.library_add_check_outlined, // 根据状态切换图标
+        color: Colors.purple, // 图标颜色
+      ),
+      label: isWatched ? const Text('已看过') : const Text('看过'),
+      onPressed: () async {
+        movieSeenSheet(context);
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white, // 按钮颜色
+        foregroundColor: Colors.deepPurple, // 文本颜色
+        shadowColor: Colors.deepPurple, // 阴影颜色
+        minimumSize: Size(140, 50), // 按钮大小
       ),
     );
   }
@@ -256,6 +246,34 @@ class _MoviePageState extends State<MoviePage> {
             });
           },
         ),
+      ),
+    );
+  }
+
+  // 加入列表按钮
+  Widget addToListButton() {
+    return ElevatedButton.icon(
+      icon: Icon(
+        inlist ? Icons.archive : Icons.archive_outlined, // 根据状态切换图标
+        color: Colors.purple, // 图标颜色
+      ),
+      label: const Text('加入列表'),
+      onPressed: () async {
+        //这是去获取最新的myTable表
+        final result = await ProjectDatabase().sudoQuery(
+            'select * from myTable where tmdbId=${widget.movie.tmdbId}');
+        int id = result[0]['id'];
+        MyMedia media = await ProjectDatabase().MM_read_id(id);
+        setState(() {
+          inlist = !inlist;
+          print('这里的豆列还需要进行部署');
+        });
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white, // 按钮颜色
+        foregroundColor: Colors.deepPurple, // 文本颜色
+        shadowColor: Colors.deepPurple, // 阴影颜色
+        minimumSize: Size(140, 50), // 按钮大小
       ),
     );
   }
