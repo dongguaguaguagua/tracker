@@ -33,8 +33,8 @@ class _MoviePageState extends State<MoviePage> {
     super.initState();
     loadState();
   }
-//页面初始化时加载myTable和infoTable
 
+  //页面初始化时加载myTable和infoTable
   void loadState() async {
     //这是去获取最新的myTable表
     final result = await ProjectDatabase()
@@ -125,9 +125,7 @@ class _MoviePageState extends State<MoviePage> {
                 ),
               ],
             ),
-            SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -156,7 +154,7 @@ class _MoviePageState extends State<MoviePage> {
                     backgroundColor: Colors.white, // 按钮颜色
                     foregroundColor: Colors.deepPurple, // 文本颜色
                     shadowColor: Colors.deepPurple, // 阴影颜色
-                    minimumSize: Size(140, 50), // 按钮大小
+                    minimumSize: const Size(140, 50), // 按钮大小
                   ),
                 ),
                 ElevatedButton.icon(
@@ -166,24 +164,15 @@ class _MoviePageState extends State<MoviePage> {
                         : Icons.library_add_check_outlined, // 根据状态切换图标
                     color: Colors.purple, // 图标颜色
                   ),
-                  label: const Text('看过'),
+                  label: isWatched ? const Text('已看过') : const Text('看过'),
                   onPressed: () async {
-                    //这是去获取最新的myTable表
-                    final result = await ProjectDatabase().sudoQuery(
-                        'select * from myTable where tmdbId=${widget.movie.tmdbId}');
-                    int id = result[0]['id'];
-                    MyMedia media = await ProjectDatabase().MM_read_id(id);
-                    setState(() {
-                      isWatched = !isWatched; // 切换状态
-                      alterWatched(isWatched, media); //将myTable里该电影记录观看日期进行修改
-                      //movie
-                    });
+                    movieSeenSheet(context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white, // 按钮颜色
                     foregroundColor: Colors.deepPurple, // 文本颜色
                     shadowColor: Colors.deepPurple, // 阴影颜色
-                    minimumSize: Size(140, 50), // 按钮大小
+                    minimumSize: const Size(140, 50), // 按钮大小
                   ),
                 ),
                 ElevatedButton.icon(
@@ -207,7 +196,7 @@ class _MoviePageState extends State<MoviePage> {
                     backgroundColor: Colors.white, // 按钮颜色
                     foregroundColor: Colors.deepPurple, // 文本颜色
                     shadowColor: Colors.deepPurple, // 阴影颜色
-                    minimumSize: Size(140, 50), // 按钮大小
+                    minimumSize: const Size(140, 50), // 按钮大小
                   ),
                 ),
               ],
@@ -259,6 +248,8 @@ class _MoviePageState extends State<MoviePage> {
             MyMedia media = await ProjectDatabase().MM_read_id(id);
             setState(() {
               media.myRating = rating;
+              // 修复需要退出重进rating才能变化的bug
+              currentRating = media.myRating ?? 0.0;
               isWatched = true;
               alterWatched(isWatched, media);
               alterRating(rating, media);
@@ -277,8 +268,9 @@ class _MoviePageState extends State<MoviePage> {
   void alterwantoWatch(bool wanttoWatch, MyMedia media) async {
     DateTime date = DateTime.now();
     media.wantToWatchDate = wanttoWatch ? date : null;
-    if (media.watchStatus != 'watched')
+    if (media.watchStatus != 'watched') {
       media.watchStatus = wanttoWatch ? 'wanttowatch' : 'unwatched';
+    }
     await ProjectDatabase().updateMedia(media);
   }
 
@@ -306,5 +298,100 @@ class _MoviePageState extends State<MoviePage> {
           ? Colors.black54
           : Colors.white54;
     });
+  }
+
+  // 看过影片弹窗（包含评分、评论）
+  void movieSeenSheet(BuildContext context) async {
+    // 这是去获取最新的myTable表
+    final result = await ProjectDatabase()
+        .sudoQuery('select * from myTable where tmdbId=${widget.movie.tmdbId}');
+    int id = result[0]['id'];
+    MyMedia media = await ProjectDatabase().MM_read_id(id);
+    if (!isWatched) {
+      // 如果没看过，则标记看过并弹窗请求评分
+      setState(() {
+        isWatched = true; // 切换状态
+        alterWatched(isWatched, media); //将myTable里该电影记录观看日期进行修改
+        //movie
+      });
+    } else {
+      // 如果已看过，也弹窗。可以编辑评分或者删除标记
+    }
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return buildSeenSheetContent(context, media);
+      },
+    ).then((value) {
+      // Sheet 关闭后执行的操作
+      // TODO: 保存评论和评分数据
+    });
+  }
+
+  Widget buildSeenSheetContent(BuildContext context, MyMedia media) {
+    return SizedBox(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.check_circle,
+                  size: 30.0,
+                  color: Colors.greenAccent,
+                ),
+                SizedBox(width: 5), // 添加一些间距
+                Text('已标记', style: TextStyle(fontSize: 24.0)),
+              ],
+            ),
+            const Divider(
+              thickness: 1,
+              indent: 100,
+              endIndent: 100,
+              color: Colors.grey,
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              '点击星星评分',
+              style: TextStyle(fontSize: 10.0, color: Colors.grey),
+            ),
+            const SizedBox(height: 5),
+            ratingCard(),
+            const SizedBox(height: 20),
+            // 评论文本框
+            const TextField(
+              maxLines: null, // 设置为null表示可以无限制输入多行文本
+              decoration: InputDecoration(
+                hintText: '说说你看过之后的感受吧～\n\n\n\n\n\n',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 20),
+            // 删除评分
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  isWatched = false; // 切换看过状态
+                  media.myRating = 0.0; // 清除评分
+                  currentRating = 0.0; // 清除评分
+                  alterWatched(isWatched, media); // 将myTable里该电影记录观看日期进行修改
+                });
+                Get.back();
+              },
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Icon(Icons.delete),
+                  SizedBox(width: 5), // 添加一些间距
+                  Text('删除标记'),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
