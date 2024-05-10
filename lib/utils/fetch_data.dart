@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'data_structure.dart';
@@ -16,6 +17,8 @@ Future<List<SingleMovie>> fetchDiscoverData(int page) async {
     List<SingleMovie> movies = jsonData
         .map<SingleMovie>((item) => SingleMovie.apiFromJson(item))
         .toList();
+
+
     return movies;
   } else {
     // 如果请求失败，则抛出异常

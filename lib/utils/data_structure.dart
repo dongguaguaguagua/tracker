@@ -8,14 +8,15 @@ class SingleMovieField {
     /// Add all fields
     id, tmdbId, adult, backdropPath, originalLanguage,
     originalTitle, overview, popularity, posterPath,
-    releaseDate, title, voteAverage, voteCount,
+    releaseDate, title, voteAverage, voteCount, 
+    
+    runtime,originalCountry,
   ];
 
   static const String id = 'id';
   static const String tmdbId = 'tmdbId';
   static const String adult = 'adult';
   static const String backdropPath = 'backdropPath';
-
   static const String originalLanguage = 'originalLanguage';
   static const String originalTitle = 'originalTitle';
   static const String overview = 'overview';
@@ -25,6 +26,9 @@ class SingleMovieField {
   static const String title = 'title';
   static const String voteAverage = 'voteAverage';
   static const String voteCount = 'voteCount';
+  
+  static const String runtime = 'runtime';
+  static const String originalCountry = 'originalCountry';
 }
 
 //InfoTable内容
@@ -42,6 +46,8 @@ class SingleMovie {
   String? title;
   double? voteAverage;
   int? voteCount;
+  int? runtime;
+  String? originalCountry;
 
   SingleMovie({
     this.tmdbId,
@@ -56,6 +62,9 @@ class SingleMovie {
     this.title,
     this.voteAverage,
     this.voteCount,
+
+    this.runtime,
+    this.originalCountry,
   });
 
   static const String createSQL = """
@@ -68,11 +77,15 @@ create table infoTable
     originalTitle    TEXT,
     overview         TEXT,
     popularity       Double,
-    posterPath      TEXT,
+    posterPath       TEXT,
     releaseDate      TEXT,
     title            TEXT,
     voteAverage      Double,
     voteCount        INTEGER,
+
+    runtime          INTEGER,
+    originalCountry  TEXT,
+
     id               integer
         constraint localTable_pk
             primary key autoincrement
@@ -93,6 +106,8 @@ create table infoTable
       title: json['title'].toString(),
       voteAverage: json['voteAverage'].toDouble(),
       voteCount: json['voteCount'],
+      runtime: json['runtime'],
+      originalCountry: json['originalCountry'],
     );
   }
   // 为了从api里的json转成List<SingleMovie>
@@ -132,6 +147,8 @@ create table infoTable
         SingleMovieField.title: title,
         SingleMovieField.voteAverage: voteAverage,
         SingleMovieField.voteCount: voteCount,
+        SingleMovieField.runtime: runtime,
+        SingleMovieField.originalCountry: originalCountry,
       };
   }
 
@@ -149,6 +166,8 @@ create table infoTable
     title??=json[SingleMovieField.title];
     voteAverage??=json[SingleMovieField.voteAverage];
     voteCount??=json[SingleMovieField.voteCount];
+    runtime??=json[SingleMovieField.runtime];
+    originalCountry??=json[SingleMovieField.originalCountry];
   }
 
 
@@ -355,35 +374,6 @@ class MyMedia {
     myRating        DOUBLE
 );
   """;
-
-  MyMedia copy({
-    int? id,
-    int? tmdbId,
-    String? mediaType,
-    DateTime? wantToWatchDate,
-    DateTime? watchedDate,
-    DateTime? browseDate,
-    DateTime? searchDate,
-    String? watchStatus,
-    int? watchTimes,
-    bool? isOnShortVideo,
-    double? myRating,
-    String? myReview,
-  }) =>
-      MyMedia(
-        id: id ?? this.id,
-        tmdbId: tmdbId ?? this.tmdbId,
-        mediaType: mediaType ?? this.mediaType,
-        wantToWatchDate: wantToWatchDate ?? this.wantToWatchDate,
-        watchedDate: watchedDate ?? this.watchedDate,
-        browseDate: browseDate ?? this.browseDate,
-        searchDate: searchDate ?? this.searchDate,
-        watchStatus: watchStatus ?? this.watchStatus,
-        watchTimes: watchTimes ?? this.watchTimes,
-        isOnShortVideo: isOnShortVideo ?? this.isOnShortVideo,
-        myRating: myRating ?? this.myRating,
-        myReview: myReview ?? this.myReview,
-      );
 
   static MyMedia fromJson(Map<String, Object?> json) => MyMedia(
         id: json[MediaFields.id] as int?,

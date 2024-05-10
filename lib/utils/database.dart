@@ -177,12 +177,12 @@ class ProjectDatabase {
 
   Future<List<SingleMovie>> SI_read_all() async {
     final db = await _instance.database;
-    const orderBy = '${SingleMovieField.voteAverage} DESC';
+    //const orderBy = '${SingleMovieField.voteAverage} DESC';
     try {
       final result =
-        await db.rawQuery('SELECT * FROM $infoTable ORDER BY $orderBy');
+        await db.rawQuery('SELECT * FROM $infoTable');
       final a = result.map((json) => SingleMovie.fromJson(json)).toList();
-      return result.map((json) => SingleMovie.fromJson(json)).toList();
+      return a;
     } 
     catch (e) {
       print('Error reading from the database: $e');
@@ -193,16 +193,31 @@ class ProjectDatabase {
 
 
 
-  // Future<int> updateLocal(MyMedia media) async {
-  //   final db = await instance.database;
+  Future<List<SingleMovie>> gethistory() async {
+    final db = await _instance.database;
+    //const orderBy = '${SingleMovieField.voteAverage} DESC';
+    try {
+      final result = await db.rawQuery(
+'SELECT it.* FROM infoTable it JOIN ( SELECT * FROM myTable WHERE watchStatus=\'watched\' OR watchStatus=\'wanttowatch\' ORDER BY watchedDate) mt ON it.id = mt.id ORDER BY SUBSTR(mt.watchedDate, 1, 10) DESC');
+      final a = result.map((json) => SingleMovie.fromJson(json)).toList();
+      return a;
+    } 
+    catch (e) {
+      print('Error reading from the database: $e');
+      return [];
+    }
+  }
 
-  //   return db.update(
-  //     mediaTable,
-  //     media.toJson(),
-  //     where: '${MediaFields.id} = ?',
-  //     whereArgs: [media.id],
-  //   );
-  // }
+  Future<int> SI_update(SingleMovie movie) async {
+    final db = await _instance.database;
+
+    return db.update(
+      infoTable,
+      movie.toJson(),
+      where: '${MediaFields.id} = ?',
+      whereArgs: [movie.id],
+    );
+  }
 
   // Future<int> deeLocal(int id) async {
   //   final db = await instance.database;

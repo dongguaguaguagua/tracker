@@ -48,24 +48,16 @@ class SettingsPage extends StatelessWidget {
                 print (genres[0].toJson());
               },
               child: const Text('进行插入操作')),
-          ElevatedButton(
-              onPressed: () async{
-                final db = ProjectDatabase();
-                final data = await db.SI_read_all();
-                print(data);
-              },
-              child: const Text('输出从localdata表（本地存储所有用户收藏的电影信息）里的记录')),
-
 
           ElevatedButton(
               onPressed: () async{
-                final movie = SingleMovie(
-                  tmdbId: 23234,
-                );
-
                 
-                await ProjectDatabase().SI_add(movie);
+                
+              final result = await ProjectDatabase().sudoQuery(
+                'select * from infoTable where id in (select id from myTable where watchStatus=\'watched\' or watchStatus=\'wanttowatch\')');
+              final a = result.map((json) => SingleMovie.fromJson(json)).toList();
 
+              print(a);
               },
               child: const Text('test sudo'))
         ],

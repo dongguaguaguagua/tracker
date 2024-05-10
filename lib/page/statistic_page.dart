@@ -1,137 +1,71 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:tracker/utils/database.dart';
-import 'package:tracker/widgets/stats_MovieList.dart';
-//import 'package:tracker/widgets/stats_screen';
-import 'package:tracker/examples.dart';
-import 'package:tracker/widgets/movie_page.dart';
-import 'package:get/get.dart';
+import 'package:tracker/utils/data_structure.dart';
 
-class StatisticPage extends StatelessWidget {
+class StatisticPage extends StatefulWidget {
   const StatisticPage({super.key});
-  
 
   @override
-  //之后会有几个功能的分区，我先来负责一下
-  //我先嫖了一个其中一个的功能模板，
+  State<StatisticPage> createState() => _StatisticPageState();
+}
+
+class _StatisticPageState extends State<StatisticPage> {
+  late List<MyMedia> medias;
+  bool isLoading = false;
+  int watchedMovieCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    refreshMedias();
+  }
+
+  @override
+  void dispose() {
+    // MediaDatabase.instance.close();
+    super.dispose();
+  }
+
+  Future refreshMedias() async {
+    setState(() => isLoading = true);
+    medias = await ProjectDatabase().MM_read_all();
+    setState(() => isLoading = false);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    //List<SingleMovie> movies = getmovies();
-
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 100,
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        flexibleSpace: ClipPath(
-          clipper: _CustomClipper(),
-          child: Container(
-            height: 150,
-            width: MediaQuery.of(context).size.width,
-            color: Color.fromARGB(255, 6, 9, 103),
-            child: Center(
-              child: Text(
-                '美国🇺🇸',
-                style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-            ),
-          ),
-        ),
-      ),
-      extendBodyBehindAppBar: true,
-      body: SingleChildScrollView(
-        child: FutureBuilder(
-          future: ProjectDatabase().SI_read_all(), 
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot){
-            if(snapshot.hasError){
-              return const Icon(Icons.error, size:80);
-            }
-            if(snapshot.hasData){
-              return Container(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 150),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      RichText(
-                        text: TextSpan(
-                          style: Theme.of(context).textTheme.headlineSmall,
-                          children: [
-                            TextSpan(
-                              text: '你的观影记录：',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge!
-                                  .copyWith(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      for (final movie in snapshot.data) 
-                        GestureDetector(
-                          // 点击就导航到MoviePage
-                          onTap: () async{
-                            Get.to(MoviePage(movie: movie), transition: Transition.fadeIn);
-                          },
-                        
-                        // InkWell(
-                        //   onTap: () {
-                        //     Navigator.push(
-                        //       context,
-                        //       MaterialPageRoute(
-                        //         builder: (context) => MoviePage(movie: movie),
-                        //       ),
-                        //     );
-                        //   },
-                          child: MovieListItem(
-                            imageUrl: "https://image.tmdb.org/t/p/w500/${movie.posterPath}",
-                            name: movie.title,
-                            information: '${movie.releaseDate} | ${movie.voteAverage}',
-                          ),
-                        ),
-                      
-                    ],
-                  ),
-                ),
-              );
-            }
-          return const CircularProgressIndicator();
-          }
-        ),
-      )  
-    );
-  }
-}
-
-class _CustomClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    double height = size.height;
-    double width = size.width;
-
-    var path = Path();
-
-    path.lineTo(0, height - 30);
-    path.quadraticBezierTo(width / 2, height*1.1, width, height - 30);
-    path.lineTo(width, 0);
-    path.close();
-
-    return path;
+    return Scaffold(body: Text(watchedMovieCount.toString()));
   }
 
-  @override
-  bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
-    return true;
-  }
+  // Future<void> countWatchedMovie() async {
+  //   setState(() {
+  //   watchedMovieCount = medias.length;
+  //   }
+  // }
 }
 
 
 
-
-
-
+// Center(
+//         child: isLoading
+//             ? const CircularProgressIndicator()
+//             : medias.isEmpty
+//                 ? const Text(
+//                     'No Medias',
+//                     style: TextStyle(color: Colors.black, fontSize: 24),
+//                   )
+//                 : ListView.builder(
+//                     itemCount: medias.length,
+//                     itemBuilder: (context, index) {
+//                       return ListTile(
+//                         title: Text("tmdb ID:${medias[index].tmdbId}"),
+//                         subtitle: Text(medias[index].watchedDate.toString()),
+//                       );
+//                     },
+//                   ),
+//       ),
 
 //extract a widget
 // class BigCard extends StatelessWidget {

@@ -19,7 +19,7 @@ class MovieListItem extends StatelessWidget{
     return Container(
       margin: const EdgeInsets.only(bottom: 10.0),
       child: AspectRatio(
-        aspectRatio: 14/9,
+        aspectRatio: 14/7,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(13.0),
           child: Stack(
