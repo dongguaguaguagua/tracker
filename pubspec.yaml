@@ -45,6 +45,7 @@ dependencies:
   intl: ^0.17.0
   # color_thief_flutter: any
   palette_generator: any
+  tuple: ^2.0.0
 
   path: any
 dev_dependencies:

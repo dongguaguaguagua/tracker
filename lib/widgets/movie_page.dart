@@ -277,10 +277,9 @@ class _MoviePageState extends State<MoviePage> {
   void alterwantoWatch(bool wanttoWatch, MyMedia media) async {
     DateTime date = DateTime.now();
     media.wantToWatchDate = wanttoWatch ? date : null;
-    if(media.watchStatus != 'watched')
+    if (media.watchStatus != 'watched')
       media.watchStatus = wanttoWatch ? 'wanttowatch' : 'unwatched';
     await ProjectDatabase().updateMedia(media);
-    
   }
 
   void alterWatched(bool isWatched, MyMedia media) async {
@@ -289,7 +288,7 @@ class _MoviePageState extends State<MoviePage> {
     media.watchedDate = isWatched ? date : null;
     media.watchTimes = 1;
     media.browseDate = isWatched ? date : null;
-    media.watchStatus = isWatched ? 'watched': 'unwatched';
+    media.watchStatus = isWatched ? 'watched' : 'unwatched';
     await ProjectDatabase().updateMedia(media);
   }
 

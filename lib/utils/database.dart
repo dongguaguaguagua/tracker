@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' show join;
 import 'package:tracker/utils/data_structure.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:tuple/tuple.dart';
+import 'package:collection/collection.dart';
 
 //表名
 const String myTable = 'myTable';
@@ -89,12 +91,12 @@ class ProjectDatabase {
     if (media.id == 0) return 0;
     final db = await _instance.database;
     try {
-        final id = await db.insert(myTable, media.toJson());
-        media.id = id;  // 确保更新对象的 id 属性
-        return id;
+      final id = await db.insert(myTable, media.toJson());
+      media.id = id; // 确保更新对象的 id 属性
+      return id;
     } catch (e) {
-        print('An error occurred while inserting a movie: $e');
-        return 0;// 抛出一个自定义的错误
+      print('An error occurred while inserting a movie: $e');
+      return 0; // 抛出一个自定义的错误
     }
   }
 
@@ -149,12 +151,12 @@ class ProjectDatabase {
   Future<SingleMovie> SI_add(SingleMovie movie) async {
     final db = await _instance.database;
     try {
-        final id = await db.insert(infoTable, movie.toJson());
-        movie.id = id;  // 确保更新对象的 id 属性
-        return movie;
+      final id = await db.insert(infoTable, movie.toJson());
+      movie.id = id; // 确保更新对象的 id 属性
+      return movie;
     } catch (e) {
-        print('An error occurred while inserting a movie: $e');
-        return movie;// 抛出一个自定义的错误
+      print('An error occurred while inserting a movie: $e');
+      return movie; // 抛出一个自定义的错误
     }
   }
 
@@ -179,30 +181,10 @@ class ProjectDatabase {
     final db = await _instance.database;
     //const orderBy = '${SingleMovieField.voteAverage} DESC';
     try {
-      final result =
-        await db.rawQuery('SELECT * FROM $infoTable');
+      final result = await db.rawQuery('SELECT * FROM $infoTable');
       final a = result.map((json) => SingleMovie.fromJson(json)).toList();
       return a;
-    } 
-    catch (e) {
-      print('Error reading from the database: $e');
-      return [];
-    }
-  }
-
-
-
-
-  Future<List<SingleMovie>> gethistory() async {
-    final db = await _instance.database;
-    //const orderBy = '${SingleMovieField.voteAverage} DESC';
-    try {
-      final result = await db.rawQuery(
-'SELECT it.* FROM infoTable it JOIN ( SELECT * FROM myTable WHERE watchStatus=\'watched\' OR watchStatus=\'wanttowatch\' ORDER BY watchedDate) mt ON it.id = mt.id ORDER BY SUBSTR(mt.watchedDate, 1, 10) DESC');
-      final a = result.map((json) => SingleMovie.fromJson(json)).toList();
-      return a;
-    } 
-    catch (e) {
+    } catch (e) {
       print('Error reading from the database: $e');
       return [];
     }
@@ -233,26 +215,25 @@ class ProjectDatabase {
     db.execute(sql);
   }
 
-
-  Future sudoInsert(String sql) async{
+  Future sudoInsert(String sql) async {
     final db = await _instance.database;
     dynamic result = db.rawInsert(sql);
     return result;
   }
 
-  Future<dynamic> sudoQuery(String sql) async{
+  Future<dynamic> sudoQuery(String sql) async {
     final db = await _instance.database;
     dynamic result = db.rawQuery(sql);
     return result;
   }
 
-  Future<int> sudoDelete(String sql) async{
+  Future<int> sudoDelete(String sql) async {
     final db = await _instance.database;
     dynamic result = db.rawDelete(sql);
     return result;
   }
 
-  Future<int> sudoUpdate(String sql) async{
+  Future<int> sudoUpdate(String sql) async {
     final db = await _instance.database;
     dynamic result = db.rawUpdate(sql);
     return result;
@@ -261,6 +242,25 @@ class ProjectDatabase {
   Future close() async {
     final db = await _instance.database;
     db.close();
+  }
+
+  //这里是功能需要的很复杂的sql查询语句
+  //1.查询homepage的历史观影记录
+  Future<List<Tuple2<SingleMovie, MyMedia>>> gethistory() async {
+    final db = await _instance.database;
+    //按照看过日期排序否则想看日期排序
+    final info = await db.rawQuery(
+        'SELECT it.* FROM infoTable it JOIN ( SELECT * FROM myTable WHERE watchStatus=\'watched\' OR watchStatus=\'wanttowatch\' )mt ON it.id = mt.id ORDER BY CASE WHEN watchedDate IS NOT NULL THEN watchedDate ELSE wantToWatchDate END DESC');
+
+    final status = await db.rawQuery(
+        'SELECT * FROM myTable WHERE watchStatus=\'watched\' OR watchStatus=\'wanttowatch\' ORDER BY CASE WHEN watchedDate IS NOT NULL THEN watchedDate ELSE wantToWatchDate END DESC');
+
+    final a = info.map((json) => SingleMovie.fromJson(json)).toList();
+    final b = status.map((json) => MyMedia.fromJson(json)).toList();
+
+    final result = List.generate(a.length, (i) => Tuple2(a[i], b[i]));
+
+    return result;
   }
 }
 
@@ -295,10 +295,10 @@ class Table {
     whereAll = whereAll.substring(4);
     if (inList.isNotEmpty) where = where.substring(4);
     List<dynamic> allIns = [];
-    if(inList.isEmpty){
+    if (inList.isEmpty) {
       var answers = await db.rawQuery('SELECT * FROM $tableName');
       print(answers.length);
-      for(var answer in answers){
+      for (var answer in answers) {
         print('1');
         print(answer);
         var insCopy = ins;

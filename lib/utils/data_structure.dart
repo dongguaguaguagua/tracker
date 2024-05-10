@@ -8,9 +8,9 @@ class SingleMovieField {
     /// Add all fields
     id, tmdbId, adult, backdropPath, originalLanguage,
     originalTitle, overview, popularity, posterPath,
-    releaseDate, title, voteAverage, voteCount, 
-    
-    runtime,originalCountry,
+    releaseDate, title, voteAverage, voteCount,
+
+    runtime, originalCountry,
   ];
 
   static const String id = 'id';
@@ -26,14 +26,14 @@ class SingleMovieField {
   static const String title = 'title';
   static const String voteAverage = 'voteAverage';
   static const String voteCount = 'voteCount';
-  
+
   static const String runtime = 'runtime';
   static const String originalCountry = 'originalCountry';
 }
 
 //InfoTable内容
 class SingleMovie {
-  int? id ;
+  int? id;
   int? tmdbId; //TMDBid
   bool? adult;
   String? backdropPath;
@@ -62,7 +62,6 @@ class SingleMovie {
     this.title,
     this.voteAverage,
     this.voteCount,
-
     this.runtime,
     this.originalCountry,
   });
@@ -127,50 +126,46 @@ create table infoTable
       voteCount: json['vote_count'],
     );
   }
-  
-
 
   Map<String, Object?> toJson() {
     int? adultCopy;
-    if(adult != null) adultCopy = adult!?1:0;
+    if (adult != null) adultCopy = adult! ? 1 : 0;
     return {
-        SingleMovieField.id: id,
-        SingleMovieField.tmdbId: tmdbId,
-        SingleMovieField.adult: adultCopy,
-        SingleMovieField.backdropPath: backdropPath,
-        SingleMovieField.originalLanguage: originalLanguage,
-        SingleMovieField.originalTitle: originalTitle,
-        SingleMovieField.overview: overview,
-        SingleMovieField.popularity: popularity,
-        SingleMovieField.posterPath: posterPath,
-        SingleMovieField.releaseDate: releaseDate,
-        SingleMovieField.title: title,
-        SingleMovieField.voteAverage: voteAverage,
-        SingleMovieField.voteCount: voteCount,
-        SingleMovieField.runtime: runtime,
-        SingleMovieField.originalCountry: originalCountry,
-      };
+      SingleMovieField.id: id,
+      SingleMovieField.tmdbId: tmdbId,
+      SingleMovieField.adult: adultCopy,
+      SingleMovieField.backdropPath: backdropPath,
+      SingleMovieField.originalLanguage: originalLanguage,
+      SingleMovieField.originalTitle: originalTitle,
+      SingleMovieField.overview: overview,
+      SingleMovieField.popularity: popularity,
+      SingleMovieField.posterPath: posterPath,
+      SingleMovieField.releaseDate: releaseDate,
+      SingleMovieField.title: title,
+      SingleMovieField.voteAverage: voteAverage,
+      SingleMovieField.voteCount: voteCount,
+      SingleMovieField.runtime: runtime,
+      SingleMovieField.originalCountry: originalCountry,
+    };
   }
 
-  addJson(Map<String, dynamic> json){
-    id??=json[SingleMovieField.id];
-    tmdbId??=json[SingleMovieField.tmdbId];
-    adult??=json[SingleMovieField.adult];
-    backdropPath??=json[SingleMovieField.backdropPath];
-    originalLanguage??=json[SingleMovieField.originalLanguage];
-    originalTitle??=json[SingleMovieField.originalTitle];
-    overview??=json[SingleMovieField.overview];
-    popularity??=json[SingleMovieField.popularity];
-    posterPath??=json[SingleMovieField.posterPath];
-    releaseDate??=json[SingleMovieField.releaseDate].toString();
-    title??=json[SingleMovieField.title];
-    voteAverage??=json[SingleMovieField.voteAverage];
-    voteCount??=json[SingleMovieField.voteCount];
-    runtime??=json[SingleMovieField.runtime];
-    originalCountry??=json[SingleMovieField.originalCountry];
+  addJson(Map<String, dynamic> json) {
+    id ??= json[SingleMovieField.id];
+    tmdbId ??= json[SingleMovieField.tmdbId];
+    adult ??= json[SingleMovieField.adult];
+    backdropPath ??= json[SingleMovieField.backdropPath];
+    originalLanguage ??= json[SingleMovieField.originalLanguage];
+    originalTitle ??= json[SingleMovieField.originalTitle];
+    overview ??= json[SingleMovieField.overview];
+    popularity ??= json[SingleMovieField.popularity];
+    posterPath ??= json[SingleMovieField.posterPath];
+    releaseDate ??= json[SingleMovieField.releaseDate].toString();
+    title ??= json[SingleMovieField.title];
+    voteAverage ??= json[SingleMovieField.voteAverage];
+    voteCount ??= json[SingleMovieField.voteCount];
+    runtime ??= json[SingleMovieField.runtime];
+    originalCountry ??= json[SingleMovieField.originalCountry];
   }
-
-
 }
 
 class CollectionFields {
@@ -240,12 +235,12 @@ class Collection {
         CollectionFields.backdropPath: backdropPath,
       };
 
-  addJson(Map<String, dynamic> json){
-    id??=json['id'];
-    name??=json['name'];
-    posterPath??=json['posterPath'];
-    backdropPath??=json['backdropPath'];
-    collectionId??=json['collectionId'];
+  addJson(Map<String, dynamic> json) {
+    id ??= json['id'];
+    name ??= json['name'];
+    posterPath ??= json['posterPath'];
+    backdropPath ??= json['backdropPath'];
+    collectionId ??= json['collectionId'];
   }
 }
 
@@ -273,20 +268,20 @@ class MyCollection {
     this.backdropPath,
   });
 
-  Map<String, dynamic> toJson(){
+  Map<String, dynamic> toJson() {
     return {
-      'id':id,
-      'name':name,
+      'id': id,
+      'name': name,
       'posterPath': posterPath,
-      'backgroundPath':backdropPath,
+      'backgroundPath': backdropPath,
     };
   }
 
-  addJson(Map<String, dynamic> json){
-    id??= json['id'];
-    name??= json['name'];
-    posterPath??= json['posterPath'];
-    backdropPath??= json['backdropPath'];
+  addJson(Map<String, dynamic> json) {
+    id ??= json['id'];
+    name ??= json['name'];
+    posterPath ??= json['posterPath'];
+    backdropPath ??= json['backdropPath'];
   }
 
   static const String createSQL = """
@@ -398,36 +393,37 @@ class MyMedia {
         myReview: json[MediaFields.myReview] as String,
       );
 
-  addJson(Map<String, Object?> json){
-    id??=json[MediaFields.id] as int?;
-    tmdbId??=json[MediaFields.tmdbId] as int?;
-    mediaType??=json[MediaFields.mediaType] as String;
-    wantToWatchDate??=(json[MediaFields.wantToWatchDate] != null? DateTime.parse(json[MediaFields.wantToWatchDate] as String)
+  addJson(Map<String, Object?> json) {
+    id ??= json[MediaFields.id] as int?;
+    tmdbId ??= json[MediaFields.tmdbId] as int?;
+    mediaType ??= json[MediaFields.mediaType] as String;
+    wantToWatchDate ??= (json[MediaFields.wantToWatchDate] != null
+        ? DateTime.parse(json[MediaFields.wantToWatchDate] as String)
         : null);
-    watchedDate??=json[MediaFields.watchedDate] != null
-    ? DateTime.parse(json[MediaFields.watchedDate] as String)
+    watchedDate ??= json[MediaFields.watchedDate] != null
+        ? DateTime.parse(json[MediaFields.watchedDate] as String)
         : null;
-    browseDate??=json[MediaFields.browseDate] != null
-    ? DateTime.parse(json[MediaFields.browseDate] as String)
+    browseDate ??= json[MediaFields.browseDate] != null
+        ? DateTime.parse(json[MediaFields.browseDate] as String)
         : null;
-    searchDate??=json[MediaFields.searchDate] != null
-    ? DateTime.parse(json[MediaFields.searchDate] as String)
+    searchDate ??= json[MediaFields.searchDate] != null
+        ? DateTime.parse(json[MediaFields.searchDate] as String)
         : null;
-    watchStatus??=json[MediaFields.watchStatus] as String;
-    watchTimes??= json[MediaFields.watchTimes] as int;
-    isOnShortVideo??=json[MediaFields.isOnShortVideo] == 0;
-    myRating??=json[MediaFields.myRating] as double;
-    myReview??= json[MediaFields.myReview] as String;
+    watchStatus ??= json[MediaFields.watchStatus] as String;
+    watchTimes ??= json[MediaFields.watchTimes] as int;
+    isOnShortVideo ??= json[MediaFields.isOnShortVideo] == 0;
+    myRating ??= json[MediaFields.myRating] as double;
+    myReview ??= json[MediaFields.myReview] as String;
   }
 
   Map<String, Object?> toJson() => {
         MediaFields.id: id,
         MediaFields.tmdbId: tmdbId,
         MediaFields.mediaType: mediaType,
-        MediaFields.wantToWatchDate: wantToWatchDate?.toIso8601String(),
-        MediaFields.watchedDate: watchedDate?.toIso8601String(),
-        MediaFields.browseDate: browseDate?.toIso8601String(),
-        MediaFields.searchDate: searchDate?.toIso8601String(),
+        MediaFields.wantToWatchDate: wantToWatchDate?.toString(),
+        MediaFields.watchedDate: watchedDate?.toString(),
+        MediaFields.browseDate: browseDate?.toString(),
+        MediaFields.searchDate: searchDate?.toString(),
         MediaFields.watchStatus: watchStatus,
         MediaFields.watchTimes: watchTimes,
         MediaFields.isOnShortVideo: (isOnShortVideo ?? false) ? 1 : 0,
@@ -472,7 +468,7 @@ class Genre {
     genre ??= json['genre'];
   }
 
-  Map<String, dynamic> toJson(){
+  Map<String, dynamic> toJson() {
     return {
       GenreFields.id: id,
       GenreFields.genreId: genreId,
@@ -519,17 +515,17 @@ class MyCollectionInstance {
     );
   }
 
-  addJson(Map<String, dynamic> json){
-    id??=json[MyCollectionInstancesFields.id];
-    collectionId??=json[MyCollectionInstancesFields.collectionId];
-    tmdbId??=json[MyCollectionInstancesFields.tmdbId];
+  addJson(Map<String, dynamic> json) {
+    id ??= json[MyCollectionInstancesFields.id];
+    collectionId ??= json[MyCollectionInstancesFields.collectionId];
+    tmdbId ??= json[MyCollectionInstancesFields.tmdbId];
   }
 
-  Map<String, dynamic> toJson(){
+  Map<String, dynamic> toJson() {
     return {
-      'id':id,
-      'collectionId':collectionId,
-      'tmdbId':tmdbId,
+      'id': id,
+      'collectionId': collectionId,
+      'tmdbId': tmdbId,
     };
   }
 
@@ -586,8 +582,8 @@ class CollectionInstances {
     myMediaId ??= int.parse(json[CollectionInstancesFields.myMediaId]);
   }
 
-  Map<String, dynamic> toJson(){
-    return{
+  Map<String, dynamic> toJson() {
+    return {
       CollectionInstancesFields.id: id,
       CollectionInstancesFields.myCollectionId: myCollectionId,
       CollectionInstancesFields.myMediaId: myMediaId,
@@ -645,8 +641,8 @@ class GenreInfo {
     tmdbId ??= int.parse(json[GenreInfoFields.tmdbId]);
   }
 
-  Map<String, dynamic> toJson(){
-    return{
+  Map<String, dynamic> toJson() {
+    return {
       GenreInfoFields.id: id,
       GenreInfoFields.genreId: genreId,
       GenreInfoFields.tmdbId: tmdbId,
