@@ -11,6 +11,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:palette_generator/palette_generator.dart';
+import 'my_collection_list.dart';
 
 class MoviePage extends StatefulWidget {
   SingleMovie movie;
@@ -259,15 +260,7 @@ class _MoviePageState extends State<MoviePage> {
       ),
       label: const Text('加入列表'),
       onPressed: () async {
-        //这是去获取最新的myTable表
-        final result = await ProjectDatabase().sudoQuery(
-            'select * from myTable where tmdbId=${widget.movie.tmdbId}');
-        int id = result[0]['id'];
-        MyMedia media = await ProjectDatabase().MM_read_id(id);
-        setState(() {
-          inlist = !inlist;
-          print('这里的豆列还需要进行部署');
-        });
+        Get.bottomSheet(CollectionCheckbox(movie: widget.movie),backgroundColor: Colors.white);
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.white, // 按钮颜色
