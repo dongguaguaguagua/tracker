@@ -1,11 +1,8 @@
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tracker/utils/database.dart';
 import 'package:tracker/utils/data_structure.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
-import 'dart:convert';
 
 class StatisticPage extends StatefulWidget {
   const StatisticPage({super.key});
