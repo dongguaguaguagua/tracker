@@ -3,6 +3,7 @@ import 'dart:math';
 //import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter/widgets.dart';
+//import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 //import 'package:path/path.dart';
 import 'package:tracker/utils/database.dart';
@@ -50,9 +51,32 @@ class ActorCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8.0),
-          Text(actor['name'], style: TextStyle(fontSize: 13, color: textColor)),
-          Text(actor['character'],
-              style: TextStyle(fontSize: 10, color: textColor)),
+          SizedBox(
+            width: 120,
+            child: Text(
+              actor['name'],
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis, // 超出部分显示省略号
+              textAlign: TextAlign.center, // 让文本居中对齐
+              style: TextStyle(
+                fontSize: 15,
+                color: textColor,
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 120,
+            child: Text(
+              actor['character'],
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis, // 超出部分显示省略号
+              textAlign: TextAlign.center, // 让文本居中对齐
+              style: TextStyle(
+                fontSize: 12,
+                color: textColor,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -136,8 +160,10 @@ class _MoviePageState extends State<MoviePage> {
               ],
             ),
             const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            Wrap(
+              spacing: 8.0, // 设置Chip之间的水平间距
+              runSpacing: 8.0, // 设置Chip之间的垂直间距
+              alignment: WrapAlignment.spaceEvenly,
               children: [
                 wantToWatchButton(),
                 watchedButton(context),
@@ -228,14 +254,15 @@ class _MoviePageState extends State<MoviePage> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
       ),
-      margin: EdgeInsets.all(20.0),
+      margin: const EdgeInsets.all(20.0),
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Row(
-              children: [
+            Wrap(
+              alignment: WrapAlignment.start,
+              children: <Widget>[
                 const Text(
                   '我的评分',
                   style: TextStyle(
@@ -244,7 +271,8 @@ class _MoviePageState extends State<MoviePage> {
                   ),
                 ),
                 const SizedBox(width: 5.0),
-                Row(
+                Wrap(
+                  alignment: WrapAlignment.start,
                   children: List.generate(5, (index) {
                     return Icon(
                       index < currentRating ? Icons.star : Icons.star_border,
@@ -271,10 +299,14 @@ class _MoviePageState extends State<MoviePage> {
   Widget keywordsChips() {
     return Wrap(
       spacing: 8.0, // 设置Chip之间的水平间距
-      runSpacing: 4.0, // 设置Chip之间的垂直间距
+      runSpacing: 8.0, // 设置Chip之间的垂直间距
+      alignment: WrapAlignment.start,
       children: keywords.map((keyword) {
         return Chip(
           label: Text(keyword['name']),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
           labelStyle: const TextStyle(
             color: Colors.black38,
             fontSize: 10,
@@ -555,11 +587,14 @@ class _MoviePageState extends State<MoviePage> {
             ratingCard(),
             const SizedBox(height: 20),
             // 评论文本框
-            const TextField(
-              maxLines: null, // 设置为null表示可以无限制输入多行文本
-              decoration: InputDecoration(
-                hintText: '说说你看过之后的感受吧～\n\n\n\n\n\n',
-                border: OutlineInputBorder(),
+            const Expanded(
+              child: TextField(
+                maxLines: null, // 设置为null表示可以无限制输入多行文本
+                minLines: 5, // 最少5行
+                decoration: InputDecoration(
+                  hintText: '说说你看过之后的感受吧～',
+                  border: OutlineInputBorder(),
+                ),
               ),
             ),
             const SizedBox(height: 20),
