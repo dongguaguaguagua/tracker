@@ -17,9 +17,15 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 100,
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
+        title: RichText(
+          text: TextSpan(
+            style: TextStyle(color: Colors.white,fontSize: 20),
+            text: '我的观影记录',
+          ),
+        ),
+        toolbarHeight: 50,
+        backgroundColor: Colors.purple,
+        elevation: 10,
       ),
       extendBodyBehindAppBar: true,
       body: SingleChildScrollView(
@@ -37,21 +43,6 @@ class HomePage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      RichText(
-                        text: TextSpan(
-                          style: Theme.of(context).textTheme.headlineSmall,
-                          children: [
-                            TextSpan(
-                              text: '你的观影记录：',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge!
-                                  .copyWith(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 20),
                       Builder(
                         builder: (BuildContext context) {
                           String lastDate = '';
