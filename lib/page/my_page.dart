@@ -29,7 +29,7 @@ class _MyPageState extends State<MyPage> {
           bottom: const TabBar(
             tabs: <Widget>[
               Tab(
-                icon: Icon(Icons.movie),
+                icon: Icon(Icons.list_alt_outlined),
                 text: '准备看',
               ),
               Tab(
@@ -163,21 +163,23 @@ class _NestedTabBarState1 extends State<NestedBar_collection>
   }
 
   Future<void> getcollectiondata() async {
-    String query = "select count(id) from myCollectionTable";
+    String query = "select id from myCollectionTable";
     String query2 = "select collectionName from myCollectionTable";
 
-    List<Map<dynamic, dynamic>> len = await ProjectDatabase().sudoQuery(query);
+    List<Map<dynamic, dynamic>> idlist =
+        await ProjectDatabase().sudoQuery(query);
     List<Map<dynamic, dynamic>> colname =
         await ProjectDatabase().sudoQuery(query2);
 
     //将不同的合集list<singlemovie>加入
-    for (int i = 1; i <= len[0].values.first; i++) {
-      final moviedat = await ProjectDatabase().getcollectdata(i);
-      moviedata.add({i: moviedat});
+    for (var tmp in idlist) {
+      final id = tmp.values.first;
+      final moviedat = await ProjectDatabase().getcollectdata(id);
+      moviedata.add({id: moviedat});
     }
 
     setState(() {
-      length = len[0].values.first;
+      length = idlist.length;
       collectionname = colname;
       //print(data[0].values.first);
       _tabController.dispose();
@@ -232,10 +234,10 @@ class MovieListCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        Init_create_all_tables(movie); //创建改电影的所有表，到本地media.db,有些列初始为空，待update
-        Add_country_runtime_genre(movie);
-        await Future.delayed(
-            Duration(milliseconds: 100)); //等0.1秒，保证Moviepage页面init前已经完成建表
+        // Init_create_all_tables(movie); //创建改电影的所有表，到本地media.db,有些列初始为空，待update
+        // Add_country_runtime_genre(movie);
+        // await Future.delayed(
+        //     Duration(milliseconds: 100)); //等0.1秒，保证Moviepage页面init前已经完成建表
         Get.to(MoviePage(movie: movie), transition: Transition.fadeIn);
       },
       child: Card(
