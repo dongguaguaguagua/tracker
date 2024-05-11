@@ -1,4 +1,4 @@
-import 'dart:ffi' hide Size;
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:path/path.dart';
 import 'package:tracker/utils/database.dart';
 import '../utils/data_structure.dart';
+import '../utils/fetch_data.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -21,6 +22,42 @@ class MoviePage extends StatefulWidget {
   State<MoviePage> createState() => _MoviePageState();
 }
 
+// 职演员表 widget
+class ActorCard extends StatelessWidget {
+  final Map<String, dynamic> actor;
+  final Color textColor;
+
+  const ActorCard(this.actor, this.textColor, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: CachedNetworkImage(
+              imageUrl:
+                  'https://image.tmdb.org/t/p/w185${actor['profile_path']}',
+              progressIndicatorBuilder: (context, url, downloadProgress) =>
+                  CircularProgressIndicator(value: downloadProgress.progress),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+              // https://www.nicepng.com/png/full/413-4138963_unknown-person-png.png
+              width: 100,
+            ),
+          ),
+          const SizedBox(height: 8.0),
+          Text(actor['name'], style: TextStyle(fontSize: 15, color: textColor)),
+          Text(actor['character'],
+              style: TextStyle(fontSize: 15, color: textColor)),
+        ],
+      ),
+    );
+  }
+}
+
 class _MoviePageState extends State<MoviePage> {
   bool isWatched = false; // 追踪是否已点击
   bool wanttoWatch = false;
@@ -30,6 +67,8 @@ class _MoviePageState extends State<MoviePage> {
   Color movieBackgroundColor = Colors.white;
   Color movieTextColor = Colors.black;
   Color movieRatingTextColor = Colors.black;
+  List<Map<String, dynamic>> casts = [];
+  List<Map<String, dynamic>> keywords = [];
 
   @override
   void initState() {
@@ -43,7 +82,16 @@ class _MoviePageState extends State<MoviePage> {
     final result = await ProjectDatabase()
         .sudoQuery('select * from myTable where tmdbId=${widget.movie.tmdbId}');
     int id = result[0]['id'];
+    int tmdbId = widget.movie.tmdbId ?? 11;
     MyMedia media = await ProjectDatabase().MM_read_id(id);
+    // 获取演员表
+    List<Map<String, dynamic>> tmpCasts = await fetchCreditsData(tmdbId);
+    // 演员最多列10个
+    tmpCasts = tmpCasts.sublist(0, min(tmpCasts.length, 10));
+    // 获取电影关键词
+    List<Map<String, dynamic>> tmpKeywords = await fetchKeyWordsData(tmdbId);
+    // 关键词最多列10个
+    tmpKeywords = tmpKeywords.sublist(0, min(tmpKeywords.length, 10));
     // 获取图片主色调
     getImgMainPalette(
         "https://image.tmdb.org/t/p/w500/${widget.movie.posterPath}");
@@ -52,6 +100,8 @@ class _MoviePageState extends State<MoviePage> {
       isWatched = (media.watchedDate != null);
       wanttoWatch = (media.wantToWatchDate != null);
       currentRating = media.myRating ?? 0.0;
+      casts = tmpCasts;
+      keywords = tmpKeywords;
     });
   }
 
@@ -91,11 +141,27 @@ class _MoviePageState extends State<MoviePage> {
                 addToListButton(),
               ],
             ),
-            const SizedBox(height: 40),
-            ratingCard(),
+            const SizedBox(height: 20),
+            isWatched ? ratingCardStatic() : const SizedBox(height: 0),
+            const SizedBox(height: 20),
+            // 职演员
+            heading2("职演员", "全部"),
+            Expanded(
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: casts.length,
+                itemBuilder: (context, index) {
+                  return ActorCard(casts[index], movieRatingTextColor);
+                },
+              ),
+            ),
+            // 电影关键词
+            heading2("关键词", "全部"),
+            const SizedBox(height: 10),
+            keywordsChips(),
             const SizedBox(height: 20),
             Text(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+              'TMDB id:${widget.movie.tmdbId}',
               maxLines: 8,
               style: Theme.of(context)
                   .textTheme
@@ -105,6 +171,114 @@ class _MoviePageState extends State<MoviePage> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget heading2(String text1, String text2) {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: Row(
+            children: <Widget>[
+              // 左边距
+              const SizedBox(width: 10),
+              Text(
+                text1,
+                style: TextStyle(
+                  fontSize: 20,
+                  color: movieTextColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+        TextButton(
+          onPressed: () {},
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const SizedBox(width: 5), // 添加一些间距
+              Text(
+                text2,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: movieRatingTextColor,
+                ),
+              ),
+              Icon(
+                Icons.arrow_right,
+                color: movieRatingTextColor,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // 不可评分的5星（仅用于展示）
+  // 评分widget的实现
+  Widget ratingCardStatic() {
+    return Card(
+      elevation: 3, // 设置卡片的阴影
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      margin: EdgeInsets.all(20.0),
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              children: [
+                const Text(
+                  '我的评分',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width: 5.0),
+                Row(
+                  children: List.generate(5, (index) {
+                    return Icon(
+                      index < currentRating ? Icons.star : Icons.star_border,
+                      color: Colors.amber,
+                    );
+                  }),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10.0),
+            Text(
+              '这是部很棒的电影 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+              style: TextStyle(
+                fontSize: 16.0,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // 电影关键词
+  Widget keywordsChips() {
+    return Wrap(
+      spacing: 8.0, // 设置Chip之间的水平间距
+      runSpacing: 4.0, // 设置Chip之间的垂直间距
+      children: keywords.map((keyword) {
+        return Expanded(
+          child: Chip(
+            label: Text(keyword['name']),
+            labelStyle: const TextStyle(
+              color: Colors.black38,
+              fontSize: 10,
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 
@@ -187,7 +361,7 @@ class _MoviePageState extends State<MoviePage> {
         backgroundColor: Colors.white, // 按钮颜色
         foregroundColor: Colors.deepPurple, // 文本颜色
         shadowColor: Colors.deepPurple, // 阴影颜色
-        minimumSize: Size(140, 50), // 按钮大小
+        minimumSize: const Size(140, 50), // 按钮大小
       ),
     );
   }
@@ -209,7 +383,7 @@ class _MoviePageState extends State<MoviePage> {
         backgroundColor: Colors.white, // 按钮颜色
         foregroundColor: Colors.deepPurple, // 文本颜色
         shadowColor: Colors.deepPurple, // 阴影颜色
-        minimumSize: Size(140, 50), // 按钮大小
+        minimumSize: const Size(140, 50), // 按钮大小
       ),
     );
   }
@@ -272,7 +446,7 @@ class _MoviePageState extends State<MoviePage> {
         backgroundColor: Colors.white, // 按钮颜色
         foregroundColor: Colors.deepPurple, // 文本颜色
         shadowColor: Colors.deepPurple, // 阴影颜色
-        minimumSize: Size(140, 50), // 按钮大小
+        minimumSize: const Size(140, 50), // 按钮大小
       ),
     );
   }
