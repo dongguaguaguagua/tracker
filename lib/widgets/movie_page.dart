@@ -123,7 +123,9 @@ class _MoviePageState extends State<MoviePage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
-        child: Column(
+        child: ListView(
+          // 可以纵向滚动的电影页面
+          scrollDirection: Axis.vertical,
           children: <Widget>[
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,7 +148,8 @@ class _MoviePageState extends State<MoviePage> {
             const SizedBox(height: 20),
             // 职演员
             heading2("职演员", "全部"),
-            Expanded(
+            SizedBox(
+              height: 250, // 设置ListView的高度为200
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: casts.length,
