@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 //import 'package:cached_network_image/cached_network_image.dart';
 
-class MovieListItem extends StatelessWidget{
+class MovieListItem extends StatelessWidget {
   final String imageUrl;
   final String name;
   final String information;
@@ -12,70 +12,77 @@ class MovieListItem extends StatelessWidget{
     required this.imageUrl,
     required this.name,
     required this.information,
-    }) : super(key:key);
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10.0),
       child: AspectRatio(
-        aspectRatio: 14/7,
+        aspectRatio: 14 / 8,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(13.0),
-          child: Stack(
-            children: [
-              // CachedNetworkImage(
-              //     imageUrl: imageUrl,
-              //     progressIndicatorBuilder: (context, url, downloadProgress) =>
-              //         CircularProgressIndicator(value: downloadProgress.progress),
-              //     errorWidget: (context, url, error) => const Icon(Icons.error),
-              //   ),
-              Flow(
-                delegate: _ParallaxFlowDelegate(
-                  scrollable: Scrollable.of(context)!,
-                  listItemContext: context,
-                  backgroundImageKey: backgroundImageKey,
-                ),
-                children: [
-                  Image.network(
-                    imageUrl,
-                    key: backgroundImageKey,
-                    fit: BoxFit.cover,
-                  ),
-                ],
+          child: Stack(children: [
+            // CachedNetworkImage(
+            //     imageUrl: imageUrl,
+            //     progressIndicatorBuilder: (context, url, downloadProgress) =>
+            //         CircularProgressIndicator(value: downloadProgress.progress),
+            //     errorWidget: (context, url, error) => const Icon(Icons.error),
+            //   ),
+            Flow(
+              delegate: _ParallaxFlowDelegate(
+                scrollable: Scrollable.of(context)!,
+                listItemContext: context,
+                backgroundImageKey: backgroundImageKey,
               ),
-              Positioned.fill(child: DecoratedBox(
+              children: [
+                Image.network(
+                  imageUrl,
+                  key: backgroundImageKey,
+                  fit: BoxFit.cover,
+                ),
+              ],
+            ),
+            Positioned.fill(
+              child: DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.6),
-                    ],
-                    begin:Alignment.topCenter,
-                    end:Alignment.bottomCenter,
-                    stops:[0.6,0.95]),
-              ),),),
-              Positioned(
-                left: 20,
-                bottom: 20,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(name,style: Theme.of(context).textTheme.headlineSmall!.copyWith(color: Colors.white,fontWeight: FontWeight.bold)),
-                    Text(information,style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white,fontWeight: FontWeight.bold)),
-                  ],
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withOpacity(0.6),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: [0.6, 0.95]),
                 ),
-              )
-            ]
-          ),
+              ),
+            ),
+            Positioned(
+              left: 20,
+              bottom: 20,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(name,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineSmall!
+                          .copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold)),
+                  Text(information,
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: Colors.white, fontWeight: FontWeight.bold)),
+                ],
+              ),
+            )
+          ]),
         ),
       ),
     );
   }
-
 }
-
 
 class _ParallaxFlowDelegate extends FlowDelegate {
   final ScrollableState scrollable;

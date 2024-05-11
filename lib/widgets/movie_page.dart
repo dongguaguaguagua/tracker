@@ -45,13 +45,13 @@ class ActorCard extends StatelessWidget {
                   CircularProgressIndicator(value: downloadProgress.progress),
               errorWidget: (context, url, error) => const Icon(Icons.error),
               // https://www.nicepng.com/png/full/413-4138963_unknown-person-png.png
-              width: 100,
+              width: 80,
             ),
           ),
           const SizedBox(height: 8.0),
-          Text(actor['name'], style: TextStyle(fontSize: 15, color: textColor)),
+          Text(actor['name'], style: TextStyle(fontSize: 13, color: textColor)),
           Text(actor['character'],
-              style: TextStyle(fontSize: 15, color: textColor)),
+              style: TextStyle(fontSize: 10, color: textColor)),
         ],
       ),
     );
@@ -294,8 +294,8 @@ class _MoviePageState extends State<MoviePage> {
         progressIndicatorBuilder: (context, url, downloadProgress) =>
             CircularProgressIndicator(value: downloadProgress.progress),
         errorWidget: (context, url, error) => const Icon(Icons.error),
-        width: 150,
-        height: 200,
+        width: 200,
+        height: 250,
       ),
     );
   }
@@ -320,6 +320,7 @@ class _MoviePageState extends State<MoviePage> {
               'TMDB评分：${widget.movie.voteAverage} (${widget.movie.voteCount})',
               style: TextStyle(fontSize: 15, color: movieRatingTextColor),
             ),
+            const SizedBox(height: 10),
             GestureDetector(
               child: Text(
                 widget.movie.overview!,
