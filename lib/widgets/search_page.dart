@@ -28,12 +28,15 @@ class _SearchBarViewState extends State<SearchBarView> {
   }
 
   Future<void> initSearchHistory() async {
-    String query =
-        "select infoTable.tmdbId,adult,backdropPath,originalLanguage,"
-        "originalTitle,overview,popularity,posterPath,releaseDate,title,voteAverage,"
-        "voteCount,runtime,originalCountry from "
-        "(myTable JOIN infoTable on myTable.id=infoTable.id)"
-        " where searchDate != '';";
+    String query = """
+SELECT infoTable.tmdbId, adult, backdropPath, originalLanguage,
+       originalTitle, overview, popularity, posterPath, releaseDate, title, voteAverage,
+       voteCount, runtime, originalCountry 
+FROM myTable 
+JOIN infoTable ON myTable.id = infoTable.id 
+WHERE searchDate != ''
+ORDER BY searchDate DESC;
+       """;
     List<dynamic> res = await ProjectDatabase().sudoQuery(query);
     setState(() {
       // 清空搜索历史
@@ -111,11 +114,12 @@ class _SearchBarViewState extends State<SearchBarView> {
   }
 
   Widget historyCard(SingleMovie movie) {
-    return GestureDetector(
-        onTap: () async {
-          Get.to(MoviePage(movie: movie), transition: Transition.fadeIn);
-        },
-        child: RawChip(label: Text('${movie.title}')));
+    return ActionChip(
+      label: Text('${movie.title}'),
+      onPressed: () {
+        Get.to(MoviePage(movie: movie), transition: Transition.fadeIn);
+      },
+    );
   }
 
   Widget searchResultList() {
@@ -141,15 +145,26 @@ class MovieListCard extends StatelessWidget {
     ProjectDatabase().sudoQuery(query);
   }
 
+  Future<void> createTables(SingleMovie movie) async {
+    final media = MyMedia(
+      tmdbId: movie.tmdbId,
+      mediaType: "movie",
+      watchStatus: "unwatched",
+      watchTimes: 0,
+      myRating: 0.0,
+      myReview: '',
+    );
+    await ProjectDatabase().SI_add(movie);
+    await ProjectDatabase().MM_add(media);
+    await Add_country_runtime_genre(movie);
+    await addSearchDate(movie);
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        Init_create_all_tables(movie); //创建改电影的所有表，到本地media.db,有些列初始为空，待update
-        Add_country_runtime_genre(movie);
-        addSearchDate(movie);
-        await Future.delayed(
-            Duration(milliseconds: 100)); //等0.1秒，保证Moviepage页面init前已经完成建表
+        createTables(movie); //创建改电影的所有表，到本地media.db,有些列初始为空，待update
         Get.to(MoviePage(movie: movie), transition: Transition.fadeIn);
       },
       child: Card(

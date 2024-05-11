@@ -230,12 +230,23 @@ class MovieListCard extends StatelessWidget {
   MovieListCard({super.key, required this.movie});
   @override
   Widget build(BuildContext context) {
+    Future<void> createTables(SingleMovie movie) async {
+      final media = MyMedia(
+        tmdbId: movie.tmdbId,
+        mediaType: "movie",
+        watchStatus: "unwatched",
+        watchTimes: 0,
+        myRating: 0.0,
+        myReview: '',
+      );
+      await ProjectDatabase().SI_add(movie);
+      await ProjectDatabase().MM_add(media);
+      await Add_country_runtime_genre(movie);
+    }
+
     return GestureDetector(
       onTap: () async {
-        Init_create_all_tables(movie); //创建改电影的所有表，到本地media.db,有些列初始为空，待update
-        Add_country_runtime_genre(movie);
-        await Future.delayed(
-            Duration(milliseconds: 100)); //等0.1秒，保证Moviepage页面init前已经完成建表
+        createTables(movie);
         Get.to(MoviePage(movie: movie), transition: Transition.fadeIn);
       },
       child: Card(
