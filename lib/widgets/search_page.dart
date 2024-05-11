@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/fetch_data.dart';
 import '../utils/data_structure.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -83,7 +84,7 @@ class MovieListCard extends StatelessWidget {
         Init_create_all_tables(movie); //创建改电影的所有表，到本地media.db,有些列初始为空，待update
         Add_country_runtime_genre(movie);
         await Future.delayed(
-            Duration(milliseconds: 100)); //等0.1秒，保证Moviepage页面init前已经完成建表
+            const Duration(milliseconds: 100)); //等0.1秒，保证Moviepage页面init前已经完成建表
         Get.to(MoviePage(movie: movie), transition: Transition.fadeIn);
       },
       child: Card(

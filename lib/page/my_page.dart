@@ -1,10 +1,10 @@
-import 'dart:convert';
-import 'dart:math';
+//import 'dart:convert';
+//import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:tracker/utils/data_structure.dart';
 import 'package:tracker/utils/database.dart';
-import '/utils/database.dart';
+import '../utils/fetch_data.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:tracker/widgets/movie_page.dart';
