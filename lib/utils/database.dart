@@ -262,7 +262,21 @@ class ProjectDatabase {
 
     return result;
   }
+
+  //mypage展示合集的数据获取
+  Future<List<SingleMovie>> getcollectdata(int i) async {
+    final db = await _instance.database;
+    String query3 =
+        "select info.* from myCollections mc,infoTable info,myTable mt where info.tmdbId=mt.tmdbId and mt.id=mc.myMediaId and mc.myCollectionId='$i' ";
+    final s = await db.rawQuery(query3);
+
+    List<SingleMovie> tmp =
+        s.map((json) => SingleMovie.fromJson(json)).toList();
+    return tmp;
+  }
 }
+
+//2.
 
 class Table {
   final String tableName;

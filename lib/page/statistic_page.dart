@@ -128,16 +128,40 @@ WHERE watchStatus = 'watched';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent, // 选择一个主题颜色
+        elevation: 0, // 阴影强度
+        title: const Text(
+          "Statistics", // 标题文本
+          style: TextStyle(
+            fontSize: 30.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+      ),
       body: Padding(
         padding: EdgeInsets.all(12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 20), // 增加与顶部的距离
             mediaHeatMap(),
-            StatNumberCard("我总共看过", watchedMovieCount, "部电影"),
-            StatNumberCard("我想观看", wantWatchMovieCount, "部电影"),
-            StatNumberCard("我发布了", myRatingCount, "个评分"),
-            StatNumberCard("我总共看了", watchedMovieTime, "分钟的电影"),
+            SizedBox(height: 20),
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2,
+                childAspectRatio: 1.2, // 更改卡片的高宽比以更好的适应内容
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                children: [
+                  StatNumberCard("我总共看过", watchedMovieCount, "部电影"),
+                  StatNumberCard("我想观看", wantWatchMovieCount, "部电影"),
+                  StatNumberCard("我发布了", myRatingCount, "个评分"),
+                  StatNumberCard("我总共看了", watchedMovieTime, "分钟的电影"),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -145,38 +169,68 @@ WHERE watchStatus = 'watched';
   }
 
   Widget mediaHeatMap() {
-    return HeatMap(
-      datasets: heatMapData,
-      colorMode: ColorMode.opacity,
-      showText: false,
-      scrollable: true,
-      colorsets: const {
-        1: Colors.red,
-        3: Colors.orange,
-        5: Colors.yellow,
-        7: Colors.green,
-        9: Colors.blue,
-        11: Colors.indigo,
-        13: Colors.purple,
-      },
-      onClick: (value) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(value.toString())));
-      },
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 30.0),
+      child: Container(
+        height: 220,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey[300]!),
+        ),
+        child: HeatMap(
+          datasets: heatMapData,
+          colorMode: ColorMode.opacity,
+          showText: false,
+          scrollable: true,
+          colorsets: const {
+            1: Colors.red,
+            3: Colors.orange,
+            5: Colors.yellow,
+            7: Colors.green,
+            9: Colors.blue,
+            11: Colors.indigo,
+            13: Colors.purple,
+          },
+          onClick: (value) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(value.toString())));
+          },
+        ),
+      ),
     );
   }
 
   Widget StatNumberCard(String title, int num, String otherWord) {
     return Card(
-      elevation: 3,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(title, style: TextStyle(fontSize: 20)),
-          Text(num.toString(),
-              style: TextStyle(fontSize: 25, color: Colors.purple)),
-          Text(otherWord, style: TextStyle(fontSize: 20)),
-        ]),
+      elevation: 6,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color.fromARGB(255, 195, 147, 203)!, Colors.purple[100]!],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween, // 调整文字间的间距
+          children: [
+            Text(title,
+                style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
+            Text(num.toString(),
+                style: const TextStyle(
+                    fontSize: 30,
+                    color: Colors.deepPurple,
+                    fontWeight: FontWeight.bold)),
+            Text(otherWord,
+                style: TextStyle(fontSize: 18, color: Colors.black)),
+          ],
+        ),
       ),
     );
   }

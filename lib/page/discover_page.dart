@@ -80,12 +80,13 @@ class DiscoverPage extends StatelessWidget {
           SizedBox(height: 20),
           SearchBar(
             hintText: '搜索你的电影',
-            leading: const Icon(Icons.search, color: Colors.deepPurple),  // 调整图标颜色
+            leading:
+                const Icon(Icons.search, color: Colors.deepPurple), // 调整图标颜色
             onTap: () {
               Get.to(const SearchBarView(), transition: Transition.fade);
             },
           ),
-          SizedBox(height: 20),  // 添加适当的间距
+          SizedBox(height: 20), // 添加适当的间距
           Expanded(
             child: GetBuilder<Controller>(
               init: Controller(),
@@ -147,11 +148,12 @@ class MovieCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       // 点击就导航到MoviePage
-      onTap: () async{
-        Init_create_all_tables(movie);//创建改电影的所有表，到本地media.db,有些列初始为空，待update
+      onTap: () async {
+        Init_create_all_tables(movie); //创建改电影的所有表，到本地media.db,有些列初始为空，待update
         Add_country_runtime_genre(movie);
-        
-        await Future.delayed(Duration(milliseconds: 100));//等0.1秒，保证Moviepage页面init前已经完成建表
+
+        await Future.delayed(
+            Duration(milliseconds: 100)); //等0.1秒，保证Moviepage页面init前已经完成建表
 
         Get.to(MoviePage(movie: movie), transition: Transition.fadeIn);
       },
@@ -208,36 +210,31 @@ class MovieCard extends StatelessWidget {
 
 //点击时初始化创建myTable和infoTable，其他的在Moviepage.dart页面交互式建表即可
 //点击时同时加入时长、地区、流派
-Future<void> Init_create_all_tables(SingleMovie movie) async{
-  
+Future<void> Init_create_all_tables(SingleMovie movie) async {
   final media = MyMedia(
       tmdbId: movie.tmdbId,
       mediaType: "movie",
       watchStatus: "unwatched",
       watchTimes: 0,
       myRating: 0.0,
-      myReview: ''
-    );
-  
+      myReview: '');
+
   await ProjectDatabase().SI_add(movie);
   await ProjectDatabase().MM_add(media);
-
 }
 
-Future<void> Add_country_runtime_genre(SingleMovie movie) async{
-
+Future<void> Add_country_runtime_genre(SingleMovie movie) async {
   //在基础List<SingleMovie>上加另一个api解析的属性，最终一起传入discoverpage.dart
   final id = movie.tmdbId;
-  final response2 = await http.get(Uri.parse(
-    'https://tmdb.melonhu.cn/get/movie/$id&language=zh-CN'));
+  final response2 = await http
+      .get(Uri.parse('https://tmdb.melonhu.cn/get/movie/$id&language=zh-CN'));
   String jsonStr2 = const Utf8Decoder().convert(response2.bodyBytes);
-  int runtime  = jsonDecode(jsonStr2)['runtime'];
+  int runtime = jsonDecode(jsonStr2)['runtime'];
   print(jsonDecode(jsonStr2)['origin_country']);
   final originalCountry = jsonDecode(jsonStr2)['origin_country'];
-  
+
   movie.runtime = runtime;
   movie.originalCountry = originalCountry[0];
 
   await ProjectDatabase().SI_update(movie);
-
 }
