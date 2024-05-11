@@ -91,6 +91,20 @@ VALUES ('$name')
     }
   }
 
+  Future<void> deleteCollections() async {
+    // 先把myCollections里面内容删光，再删myCollectionTable
+    for (int i = 0; i < selectedItems.length; i++) {
+      String deleteQuery =
+        "DELETE FROM myCollections WHERE myCollectionId=${selectedItems[i].keys.first};";
+      ProjectDatabase().sudoQuery(deleteQuery);
+    }
+    for (int i = 0; i < selectedItems.length; i++) {
+      String deleteQuery =
+        "DELETE FROM myCollectionTable WHERE id=${selectedItems[i].keys.first};";
+      ProjectDatabase().sudoQuery(deleteQuery);
+    }
+  }
+
   void _toggleCheckbox(Map<int, String> item) {
     setState(() {
       if (_isContain(item)) {
@@ -126,6 +140,8 @@ VALUES ('$name')
           addNewCollectionButton(),
           const SizedBox(height: 10),
           confirmButton(),
+          const SizedBox(height: 10),
+          deleteButton(),
         ],
       ),
     );
@@ -166,6 +182,26 @@ VALUES ('$name')
         backgroundColor: Colors.purple, // 按钮颜色
         foregroundColor: Colors.white, // 文本颜色
         shadowColor: Colors.deepPurple, // 阴影颜色
+        minimumSize: Size(140, 50), // 按钮大小
+      ),
+    );
+  }
+
+  Widget deleteButton() {
+    return ElevatedButton.icon(
+      icon: Icon(
+        Icons.delete,
+        color: Colors.white, // 图标颜色
+      ),
+      label: const Text('删除'),
+      onPressed: () async {
+        deleteCollections();
+        refreshCollections();
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.red, // 按钮颜色
+        foregroundColor: Colors.white, // 文本颜色
+        shadowColor: Colors.deepOrange, // 阴影颜色
         minimumSize: Size(140, 50), // 按钮大小
       ),
     );
