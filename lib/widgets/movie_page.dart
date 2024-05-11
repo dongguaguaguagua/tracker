@@ -1,15 +1,15 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+//import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:path/path.dart';
+//import 'package:path/path.dart';
 import 'package:tracker/utils/database.dart';
 import '../utils/data_structure.dart';
 import '../utils/fetch_data.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:intl/intl.dart';
+//import 'package:intl/intl.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'my_collection_list.dart';

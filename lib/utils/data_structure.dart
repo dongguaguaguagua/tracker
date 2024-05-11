@@ -1,7 +1,7 @@
 // 单个电影的数据结构
-import 'dart:ffi';
+//import 'dart:ffi';
 
-import 'package:flutter/foundation.dart';
+//import 'package:flutter/foundation.dart';
 
 class SingleMovieField {
   static final List<String> values = [
