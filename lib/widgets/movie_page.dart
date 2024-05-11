@@ -143,14 +143,19 @@ class _MoviePageState extends State<MoviePage> {
               'TMDB评分：${widget.movie.voteAverage} (${widget.movie.voteCount})',
               style: TextStyle(fontSize: 15, color: movieRatingTextColor),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 15.0),
+            GestureDetector(
               child: Text(
                 widget.movie.overview!,
                 style: TextStyle(fontSize: 13, color: movieTextColor),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 6,
               ),
+              onTap: () {
+                Get.defaultDialog(
+                  title: "电影简介",
+                  middleText: "${widget.movie.overview}",
+                );
+              },
             ),
           ],
         ),
@@ -260,7 +265,8 @@ class _MoviePageState extends State<MoviePage> {
       ),
       label: const Text('加入列表'),
       onPressed: () async {
-        Get.bottomSheet(CollectionCheckbox(movie: widget.movie),backgroundColor: Colors.white);
+        Get.bottomSheet(CollectionCheckbox(movie: widget.movie),
+            backgroundColor: Colors.white);
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.white, // 按钮颜色
