@@ -13,6 +13,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'my_collection_list.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class MoviePage extends StatefulWidget {
   SingleMovie movie;
@@ -272,13 +273,11 @@ class _MoviePageState extends State<MoviePage> {
       spacing: 8.0, // 设置Chip之间的水平间距
       runSpacing: 4.0, // 设置Chip之间的垂直间距
       children: keywords.map((keyword) {
-        return Expanded(
-          child: Chip(
-            label: Text(keyword['name']),
-            labelStyle: const TextStyle(
-              color: Colors.black38,
-              fontSize: 10,
-            ),
+        return Chip(
+          label: Text(keyword['name']),
+          labelStyle: const TextStyle(
+            color: Colors.black38,
+            fontSize: 10,
           ),
         );
       }).toList(),
