@@ -194,9 +194,8 @@ class _NestedTabBarState1 extends State<NestedBar_collection>
   @override
   Widget build(BuildContext context) {
     if (collectionname.isEmpty) {
-      return const Center(
-          child:
-              CircularProgressIndicator()); // Show loading indicator while data is empty
+      return const Center(child: Text('你还没有合集哦(＾-＾)v'));
+      //CircularProgressIndicator()); // Show loading indicator while data is empty
     }
     return Column(
       children: <Widget>[
