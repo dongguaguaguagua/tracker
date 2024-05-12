@@ -110,7 +110,7 @@ class HomePage extends StatelessWidget {
                                     Expanded(
                                       child: GestureDetector(
                                         onTap: () async {
-                                          Get.to(MoviePage(movie: movie.item1),
+                                          Get.to(()=>MoviePage(movie: movie.item1),
                                               transition: Transition.fadeIn);
                                         },
                                         child: MovieListItem(

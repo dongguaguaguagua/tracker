@@ -95,7 +95,7 @@ class ProjectDatabase {
       media.id = id; // 确保更新对象的 id 属性
       return id;
     } catch (e) {
-      print('An error occurred while inserting a movie: $e');
+      print('An error occurred while inserting a movie: ${media.tmdbId}');
       return 0; // 抛出一个自定义的错误
     }
   }
@@ -155,7 +155,7 @@ class ProjectDatabase {
       movie.id = id; // 确保更新对象的 id 属性
       return movie;
     } catch (e) {
-      print('An error occurred while inserting a movie: $e');
+      print('An error occurred while inserting a movie: ${movie.title}');
       return movie; // 抛出一个自定义的错误
     }
   }
