@@ -18,8 +18,8 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: RichText(
-          text: TextSpan(
-            style: TextStyle(color: Colors.white,fontSize: 20),
+          text: const TextSpan(
+            style: TextStyle(color: Colors.white, fontSize: 20),
             text: '我的观影记录',
           ),
         ),

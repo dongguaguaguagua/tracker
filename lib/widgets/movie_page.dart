@@ -14,7 +14,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'my_collection_list.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class MoviePage extends StatefulWidget {
   SingleMovie movie;
@@ -47,12 +46,12 @@ class ActorCard extends StatelessWidget {
                   CircularProgressIndicator(value: downloadProgress.progress),
               errorWidget: (context, url, error) => const Icon(Icons.error),
               // https://www.nicepng.com/png/full/413-4138963_unknown-person-png.png
-              width: 80,
+              width: 100,
             ),
           ),
           const SizedBox(height: 8.0),
           SizedBox(
-            width: 120,
+            width: 100,
             child: Text(
               actor['name'],
               maxLines: 1,
@@ -65,7 +64,7 @@ class ActorCard extends StatelessWidget {
             ),
           ),
           SizedBox(
-            width: 120,
+            width: 100,
             child: Text(
               actor['character'],
               maxLines: 1,
@@ -109,17 +108,18 @@ class _MoviePageState extends State<MoviePage> {
     int id = result[0]['id'];
     int tmdbId = widget.movie.tmdbId ?? 11;
     MyMedia media = await ProjectDatabase().MM_read_id(id);
-    // 获取演员表
-    List<Map<String, dynamic>> tmpCasts = await fetchCreditsData(tmdbId);
-    // 演员最多列10个
-    tmpCasts = tmpCasts.sublist(0, min(tmpCasts.length, 10));
+    // 获取图片主色调
+    getImgMainPalette(
+      "https://image.tmdb.org/t/p/w500/${widget.movie.posterPath}",
+    );
     // 获取电影关键词
     List<Map<String, dynamic>> tmpKeywords = await fetchKeyWordsData(tmdbId);
     // 关键词最多列10个
     tmpKeywords = tmpKeywords.sublist(0, min(tmpKeywords.length, 10));
-    // 获取图片主色调
-    getImgMainPalette(
-        "https://image.tmdb.org/t/p/w500/${widget.movie.posterPath}");
+    // 获取演员表
+    List<Map<String, dynamic>> tmpCasts = await fetchCreditsData(tmdbId);
+    // 演员最多列10个
+    tmpCasts = tmpCasts.sublist(0, min(tmpCasts.length, 10));
 
     setState(() {
       isWatched = (media.watchedDate != null);
@@ -192,6 +192,7 @@ class _MoviePageState extends State<MoviePage> {
             const SizedBox(height: 20),
             Text(
               'TMDB id:${widget.movie.tmdbId}',
+              textAlign: TextAlign.center,
               maxLines: 8,
               style: Theme.of(context)
                   .textTheme
@@ -261,6 +262,7 @@ class _MoviePageState extends State<MoviePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Wrap(
+              spacing: 5.0, // 设置水平间距
               alignment: WrapAlignment.start,
               children: <Widget>[
                 const Text(
@@ -270,20 +272,23 @@ class _MoviePageState extends State<MoviePage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(width: 5.0),
-                Wrap(
-                  alignment: WrapAlignment.start,
-                  children: List.generate(5, (index) {
-                    return Icon(
-                      index < currentRating ? Icons.star : Icons.star_border,
-                      color: Colors.amber,
-                    );
-                  }),
+                Padding(
+                  // 史山。不知道为什么Wrap()会导致俩元素不在一行。Row()就没有这个问题。
+                  padding: const EdgeInsets.only(top: 3.0),
+                  child: Wrap(
+                    alignment: WrapAlignment.start,
+                    children: List.generate(5, (index) {
+                      return Icon(
+                        index < currentRating ? Icons.star : Icons.star_border,
+                        color: Colors.amber,
+                      );
+                    }),
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 10.0),
-            Text(
+            const Text(
               '这是部很棒的电影 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
               style: TextStyle(
                 fontSize: 16.0,
@@ -339,18 +344,95 @@ class _MoviePageState extends State<MoviePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            //const SizedBox(height: 10,),
             Text(
               widget.movie.title!,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                  color: movieTextColor),
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+                color: movieTextColor,
+              ),
             ),
-            Text(
-              'TMDB评分：${widget.movie.voteAverage} (${widget.movie.voteCount})',
-              style: TextStyle(fontSize: 15, color: movieRatingTextColor),
+            const SizedBox(height: 5),
+            Wrap(
+              children: <Widget>[
+                SizedBox(
+                  height: 21,
+                  child: Icon(
+                    Icons.thumb_up,
+                    size: 15,
+                    color: movieRatingTextColor,
+                  ),
+                ),
+                const SizedBox(width: 5),
+                SizedBox(
+                  height: 21,
+                  child: Text(
+                    'TMDB评分：${widget.movie.voteAverage} (${widget.movie.voteCount})',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: movieRatingTextColor,
+                    ),
+                  ),
+                ),
+              ],
             ),
+            const SizedBox(height: 5),
+            Wrap(
+              children: <Widget>[
+                SizedBox(
+                  height: 21,
+                  child: Icon(
+                    Icons.date_range,
+                    size: 15,
+                    color: movieRatingTextColor,
+                  ),
+                ),
+                const SizedBox(width: 5),
+                SizedBox(
+                  height: 21,
+                  child: Text(
+                    '上映日期 ${widget.movie.releaseDate}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: movieRatingTextColor,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                SizedBox(
+                  height: 21,
+                  child: Icon(
+                    Icons.access_time,
+                    size: 15,
+                    color: movieRatingTextColor,
+                  ),
+                ),
+                const SizedBox(width: 5),
+                SizedBox(
+                  height: 21,
+                  child: Text(
+                    '${widget.movie.runtime} 分钟',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: movieRatingTextColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            //Wrap(
+            //  spacing: 5.0, // 设置Chip之间的水平间距
+            //  runSpacing: 5.0, // 设置Chip之间的垂直间距
+            //  alignment: WrapAlignment.start,
+            //),
             const SizedBox(height: 10),
             GestureDetector(
               child: Text(
@@ -361,7 +443,12 @@ class _MoviePageState extends State<MoviePage> {
               ),
               onTap: () {
                 Get.defaultDialog(
-                  title: "电影简介",
+                  titlePadding: const EdgeInsets.only(top: 20.0),
+                  contentPadding: const EdgeInsets.all(20.0),
+                  title: "${widget.movie.title} - 简介",
+                  titleStyle: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
                   middleText: "${widget.movie.overview}",
                 );
               },

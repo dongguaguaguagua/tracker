@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tracker/utils/database.dart';
 import 'package:tracker/utils/data_structure.dart';
@@ -9,6 +9,71 @@ class StatisticPage extends StatefulWidget {
 
   @override
   State<StatisticPage> createState() => _StatisticPageState();
+}
+
+class CountAnimation extends StatefulWidget {
+  final int startValue;
+  final int endValue;
+
+  const CountAnimation({
+    super.key,
+    required this.startValue,
+    required this.endValue,
+  });
+
+  @override
+  _CountAnimationState createState() => _CountAnimationState();
+}
+
+class _CountAnimationState extends State<CountAnimation>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<int> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    );
+
+    _animation = IntTween(
+      begin: widget.startValue,
+      end: widget.endValue,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeInOut,
+      ),
+    );
+
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Text(
+          '${_animation.value}',
+          style: const TextStyle(
+            fontSize: 30.0,
+            color: Colors.deepPurple,
+            fontWeight: FontWeight.bold,
+          ),
+        );
+      },
+    );
+  }
 }
 
 class _StatisticPageState extends State<StatisticPage> {
@@ -85,9 +150,9 @@ class _StatisticPageState extends State<StatisticPage> {
   Future getWatchedMovieTime() async {
     setState(() => isLoading = true);
     const String query = """
-SELECT runtime 
-FROM infoTable 
-JOIN myTable ON infoTable.tmdbId = myTable.tmdbId 
+SELECT runtime
+FROM infoTable
+JOIN myTable ON infoTable.tmdbId = myTable.tmdbId
 WHERE watchStatus = 'watched';
 """;
     List<dynamic> count = await ProjectDatabase().sudoQuery(query);
@@ -104,7 +169,7 @@ WHERE watchStatus = 'watched';
     const String query =
         "select watchedDate,wantToWatchDate,myRating from myTable";
     List<dynamic> data = await ProjectDatabase().sudoQuery(query);
-    data.forEach((item) {
+    for (var item in data) {
       // 提取日期字符串
       String? watchedDateString = item['watchedDate'];
       String? wantToWatchDateString = item['wantToWatchDate'];
@@ -121,7 +186,7 @@ WHERE watchStatus = 'watched';
             DateTime.parse(wantToWatchDateString.split('T')[0]);
         heatMapData[wantToWatchDate] = (heatMapData[wantToWatchDate] ?? 0) + 1;
       }
-    });
+    }
     setState(() => isLoading = false);
   }
 
@@ -141,13 +206,13 @@ WHERE watchStatus = 'watched';
         ),
       ),
       body: Padding(
-        padding: EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 20), // 增加与顶部的距离
+            const SizedBox(height: 20), // 增加与顶部的距离
             mediaHeatMap(),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,
@@ -155,10 +220,10 @@ WHERE watchStatus = 'watched';
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
                 children: [
-                  StatNumberCard("我总共看过", watchedMovieCount, "部电影"),
-                  StatNumberCard("我想观看", wantWatchMovieCount, "部电影"),
-                  StatNumberCard("我发布了", myRatingCount, "个评分"),
-                  StatNumberCard("我总共看了", watchedMovieTime, "分钟的电影"),
+                  statNumberCard("我总共看过", watchedMovieCount, "部电影"),
+                  statNumberCard("我想观看", wantWatchMovieCount, "部电影"),
+                  statNumberCard("我发布了", myRatingCount, "个评分"),
+                  statNumberCard("我总共看了", watchedMovieTime, "分钟的电影"),
                 ],
               ),
             ),
@@ -200,14 +265,17 @@ WHERE watchStatus = 'watched';
     );
   }
 
-  Widget StatNumberCard(String title, int num, String otherWord) {
+  Widget statNumberCard(String title, int number, String otherWord) {
     return Card(
       elevation: 6,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color.fromARGB(255, 195, 147, 203)!, Colors.purple[100]!],
+            colors: [
+              const Color.fromARGB(255, 195, 147, 203),
+              Colors.purple[100]!
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -217,18 +285,35 @@ WHERE watchStatus = 'watched';
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween, // 调整文字间的间距
           children: [
-            Text(title,
-                style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
-            Text(num.toString(),
-                style: const TextStyle(
-                    fontSize: 30,
-                    color: Colors.deepPurple,
-                    fontWeight: FontWeight.bold)),
-            Text(otherWord,
-                style: TextStyle(fontSize: 18, color: Colors.black)),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            // number会变化。初始值为0
+            number == 0
+                ? Text(
+                    number.toString(),
+                    style: const TextStyle(
+                      fontSize: 30.0,
+                      color: Colors.deepPurple,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+                : CountAnimation(
+                    startValue: 1,
+                    endValue: number,
+                  ),
+            Text(
+              otherWord,
+              style: const TextStyle(
+                fontSize: 18,
+                color: Colors.black,
+              ),
+            ),
           ],
         ),
       ),
@@ -237,25 +322,25 @@ WHERE watchStatus = 'watched';
 }
 
 // Center(
-//         child: isLoading
-//             ? const CircularProgressIndicator()
-//             : medias.isEmpty
-//                 ? const Text(
-//                     'No Medias',
-//                     style: TextStyle(color: Colors.black, fontSize: 24),
-//                   )
-//                 : ListView.builder(
-//                     itemCount: medias.length,
-//                     itemBuilder: (context, index) {
-//                       return ListTile(
-//                         title: Text("tmdb ID:${medias[index].tmdbId}"),
-//                         subtitle: Text(medias[index].watchedDate.toString()),
-//                       );
-//                     },
-//                   ),
+//   child: isLoading
+//     ? const CircularProgressIndicator()
+//     : medias.isEmpty
+//       ? const Text(
+//           'No Medias',
+//           style: TextStyle(color: Colors.black, fontSize: 24),
+//         )
+//       : ListView.builder(
+//         itemCount: medias.length,
+//         itemBuilder: (context, index) {
+//           return ListTile(
+//             title: Text("tmdb ID:${medias[index].tmdbId}"),
+//             subtitle: Text(medias[index].watchedDate.toString()),
+//           );
+//         },
 //       ),
+// ),
 
-//extract a widget
+// // extract a widget
 // class BigCard extends StatelessWidget {
 //   const BigCard({
 //     super.key,
