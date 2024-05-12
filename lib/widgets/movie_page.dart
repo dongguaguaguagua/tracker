@@ -137,7 +137,7 @@ class _MoviePageState extends State<MoviePage> {
       appBar: AppBar(
         backgroundColor: movieBackgroundColor,
         toolbarHeight: 80,
-        //title: Text(movie.title!),
+        // title: Text(widget.movie.title!),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           color: movieTextColor,

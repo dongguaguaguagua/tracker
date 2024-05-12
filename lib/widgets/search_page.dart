@@ -77,7 +77,7 @@ ORDER BY searchDate DESC;
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.only(top: 40, left: 20, right: 20),
           child: Column(
             children: <Widget>[
               SearchBar(

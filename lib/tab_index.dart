@@ -26,10 +26,10 @@ class _IndexPageState extends State<IndexPage> {
       icon: Icon(Icons.bar_chart),
       label: '统计',
     ),
-    const BottomNavigationBarItem(
-      icon: Icon(Icons.settings),
-      label: '设置',
-    ),
+    // const BottomNavigationBarItem(
+    //   icon: Icon(Icons.settings),
+    //   label: '设置',
+    // ),
     const BottomNavigationBarItem(
       icon: Icon(Icons.person),
       label: '我的',
@@ -40,8 +40,8 @@ class _IndexPageState extends State<IndexPage> {
     const HomePage(),
     const DiscoverPage(),
     const StatisticPage(),
-    const SettingsPage(),
-    MyPage(),
+    // const SettingsPage(),
+    const MyPage(),
   ];
 
   int currentIndex = 0;
