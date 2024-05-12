@@ -114,8 +114,7 @@ class _StatisticPageState extends State<StatisticPage> {
 
   Future getWatchedMovieCount() async {
     setState(() => isLoading = true);
-    const String query =
-        "select count(*) from myTable where watchedDate != ''";
+    const String query = "select count(*) from myTable where watchedDate != ''";
     dynamic count = await ProjectDatabase().sudoQuery(query);
     setState(() => isLoading = false);
 
@@ -169,7 +168,7 @@ WHERE watchStatus = 'watched';
     const String query =
         "select watchedDate,wantToWatchDate,myRating from myTable";
     List<dynamic> data = await ProjectDatabase().sudoQuery(query);
-    for (var item in data) {
+    data.forEach((item) {
       // 提取日期字符串
       String? watchedDateString = item['watchedDate'];
       String? wantToWatchDateString = item['wantToWatchDate'];
@@ -177,17 +176,26 @@ WHERE watchStatus = 'watched';
       // 如果watchedDate不为空，提取日期并加入heatMapData
       if (watchedDateString != null) {
         DateTime watchedDate = DateTime.parse(watchedDateString.split('T')[0]);
-        heatMapData[watchedDate] = (heatMapData[watchedDate] ?? 0) + 1;
+        DateTime date=dateTimeBuilder(watchedDate);
+        heatMapData[date] = (heatMapData[date] ?? 0) + 1;
       }
 
       // 如果wantToWatchDate不为空，提取日期并加入heatMapData
       if (wantToWatchDateString != null) {
         DateTime wantToWatchDate =
             DateTime.parse(wantToWatchDateString.split('T')[0]);
-        heatMapData[wantToWatchDate] = (heatMapData[wantToWatchDate] ?? 0) + 1;
+        DateTime date=dateTimeBuilder(wantToWatchDate);
+        heatMapData[date] = (heatMapData[date] ?? 0) + 1;
       }
-    }
+    });
     setState(() => isLoading = false);
+  }
+
+  DateTime dateTimeBuilder(DateTime date){
+    String month=date.month < 10 ? '0${date.month}' : '${date.month}';
+    String day=date.day < 10 ? '0${date.day}' : '${date.day}';
+    date = DateTime.parse('${date.year}-$month-$day');
+    return date;
   }
 
   @override
