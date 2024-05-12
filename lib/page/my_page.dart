@@ -248,7 +248,7 @@ class MovieListCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () async {
-        createTables(movie);
+        await createTables(movie);
         Get.to(()=>MoviePage(movie: movie), transition: Transition.fadeIn);
       },
       child: Card(

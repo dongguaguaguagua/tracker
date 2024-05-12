@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'tab_index.dart';
 import 'package:get/get.dart';
@@ -7,7 +9,9 @@ import 'cache_data/cachedata.dart';
 
 
 void main() async{
-  databaseFactory = databaseFactoryFfi;
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      databaseFactory = databaseFactoryFfi;
+  }
   await cache_data.getInstance().initMovieData();
   runApp(
     // ChangeNotifierProvider(

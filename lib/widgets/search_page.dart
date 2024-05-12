@@ -117,7 +117,7 @@ ORDER BY searchDate DESC;
     return ActionChip(
       label: Text('${movie.title}'),
       onPressed: () {
-        Get.to(()=>MoviePage(movie: movie), transition: Transition.fadeIn);
+        Get.to(() => MoviePage(movie: movie), transition: Transition.fadeIn);
       },
     );
   }
@@ -162,13 +162,13 @@ class MovieListCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () async {
-        createTables(movie); //创建改电影的所有表，到本地media.db,有些列初始为空，待update
-        Get.to(()=>MoviePage(movie: movie), transition: Transition.fadeIn);
-      },
-      child: Card(
-        elevation: 3,
+    return Card(
+      elevation: 3,
+      child: InkWell(
+        onTap: () async {
+          await createTables(movie); //创建改电影的所有表，到本地media.db,有些列初始为空，待update
+          Get.to(() => MoviePage(movie: movie), transition: Transition.fadeIn);
+        },
         child: ListTile(
           leading: Container(
             child: CachedNetworkImage(
