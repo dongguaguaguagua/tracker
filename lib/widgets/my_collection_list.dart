@@ -213,26 +213,37 @@ VALUES ('$name')
       padding: const EdgeInsets.all(20.0),
       child: Column(children: [
         TextField(
-            autofocus: true,
-            controller: _controller,
-            decoration: InputDecoration(
-              labelText: "请输入合集名称",
-              hintText: "合集名称不能为空",
-              prefixIcon: Icon(Icons.collections_bookmark),
-            )),
+          autofocus: true,
+          controller: _controller,
+          decoration: const InputDecoration(
+            labelText: "请输入合集名称",
+            hintText: "合集名称不能为空",
+            prefixIcon: Icon(Icons.collections_bookmark),
+          ),
+        ),
         const SizedBox(height: 10),
         ElevatedButton(
-            onPressed: () {
+          onPressed: () {
+            //print(_controller.text.trim());
+            if (_controller.text.trim() != "") {
               addNewCollection(_controller.text);
               Get.back();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.purple, // 按钮颜色
-              foregroundColor: Colors.white, // 文本颜色
-              shadowColor: Colors.deepPurple, // 阴影颜色
-              minimumSize: Size(140, 50), // 按钮大小
-            ),
-            child: Text("确定"))
+            } else {}
+          },
+          style: _controller.text.trim() == ""
+              ? ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey, // 按钮 disabled
+                  foregroundColor: Colors.white, // 文本颜色
+                  shadowColor: Colors.deepPurple, // 阴影颜色
+                  minimumSize: const Size(140, 50), // 按钮大小
+                )
+              : ElevatedButton.styleFrom(
+                  backgroundColor: Colors.purple, // 合集名称不为空
+                  foregroundColor: Colors.white, // 文本颜色
+                  minimumSize: const Size(140, 50), // 按钮大小
+                ),
+          child: const Text("确定"),
+        ),
       ]),
     );
   }

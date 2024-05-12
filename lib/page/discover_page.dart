@@ -75,14 +75,17 @@ class DiscoverPage extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          const SizedBox(height: 20),
-          SearchBar(
-            hintText: '搜索你的电影',
-            leading:
-                const Icon(Icons.search, color: Colors.deepPurple), // 调整图标颜色
-            onTap: () {
-              Get.to(()=>SearchBarView(), transition: Transition.fade);
-            },
+          Padding(
+            padding: const EdgeInsets.only(top: 40, left: 20, right: 20),
+            child: SearchBar(
+              hintText: '搜索你的电影',
+              leading:
+                  const Icon(Icons.search, color: Colors.deepPurple), // 调整图标颜色
+              onTap: () {
+                Get.to(() => const SearchBarView(),
+                    transition: Transition.fade);
+              },
+            ),
           ),
           const SizedBox(height: 20), // 添加适当的间距
           Expanded(
@@ -162,7 +165,7 @@ class MovieCard extends StatelessWidget {
       // 点击就导航到MoviePage
       onTap: () async {
         await createTables(movie); //创建改电影的所有表，到本地media.db,有些列初始为空，待update
-        Get.to(()=>MoviePage(movie: movie), transition: Transition.fadeIn);
+        Get.to(() => MoviePage(movie: movie), transition: Transition.fadeIn);
       },
       // 一个电影美化过的卡片
       child: Card(
