@@ -115,7 +115,7 @@ class _StatisticPageState extends State<StatisticPage> {
   Future getWatchedMovieCount() async {
     setState(() => isLoading = true);
     const String query =
-        "select count(*) from myTable where watchStatus=\"watched\"";
+        "select count(*) from myTable where watchedDate != ''";
     dynamic count = await ProjectDatabase().sudoQuery(query);
     setState(() => isLoading = false);
 
@@ -127,7 +127,7 @@ class _StatisticPageState extends State<StatisticPage> {
   Future getWantWatchMovieCount() async {
     setState(() => isLoading = true);
     const String query =
-        "select count(*) from myTable where watchStatus=\"wanttowatch\"";
+        "select count(*) from myTable where wantToWatchDate != ''";
     dynamic count = await ProjectDatabase().sudoQuery(query);
     setState(() => isLoading = false);
 
