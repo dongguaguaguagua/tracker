@@ -154,7 +154,7 @@ class _NestedBar_areaState extends State<NestedBar_area>
           tabs: const <Widget>[
             Tab(text: '美国'),
             Tab(text: '欧洲'),
-            Tab(text: '中国大陆'),
+            Tab(text: '大陆'),
             Tab(text: '港台'),
             Tab(text: '日韩'),
             Tab(text: '其他'),
