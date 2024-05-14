@@ -18,7 +18,7 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
-  List<Map<SingleMovie,double>> ratingedmovie = [];
+  List<Map<SingleMovie, double>> ratingedmovie = [];
   List<SingleMovie> wanttowatchmovie = [];
   @override
   void initState() {
@@ -27,13 +27,14 @@ class _MyPageState extends State<MyPage> {
     getWantwatchdata();
   }
 
-  Future<void> getRatingdata() async{
+  Future<void> getRatingdata() async {
     final tmp = await ProjectDatabase().getratingdata();
     setState(() {
       ratingedmovie = tmp;
     });
   }
-  Future<void> getWantwatchdata() async{
+
+  Future<void> getWantwatchdata() async {
     final tmp = await ProjectDatabase().getwantwatchdata();
     setState(() {
       wanttowatchmovie = tmp;
@@ -48,7 +49,14 @@ class _MyPageState extends State<MyPage> {
       length: 4,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('这里是你的观影历史档案！'),
+          title: const Text(
+            '我的观影历史档案',
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
           bottom: const TabBar(
             tabs: <Widget>[
               Tab(
@@ -87,8 +95,8 @@ class _MyPageState extends State<MyPage> {
               itemCount: ratingedmovie.length,
               itemBuilder: (context, ind) {
                 return ratingMovieListCard(
-                    movie: ratingedmovie[ind].keys.first,
-                    rating: ratingedmovie[ind].values.first,
+                  movie: ratingedmovie[ind].keys.first,
+                  rating: ratingedmovie[ind].values.first,
                 );
                 // return MovieListCard(movie: _searchResults[index]);
               },
@@ -123,22 +131,21 @@ class _NestedBar_areaState extends State<NestedBar_area>
     super.initState();
     _tabController = TabController(length: 6, vsync: this);
     getCountrydata();
-
   }
 
   Future<void> getCountrydata() async {
-
     //返回多个值？？？
     final tmp = await ProjectDatabase().getcountrydata();
 
     setState(() {
-    USmovie = tmp.item1;
-    EUmovie = tmp.item2;
-    CNmovie = tmp.item3;
-    HKTWmovie = tmp.item4;
-    JPmovie = tmp.item5;
+      USmovie = tmp.item1;
+      EUmovie = tmp.item2;
+      CNmovie = tmp.item3;
+      HKTWmovie = tmp.item4;
+      JPmovie = tmp.item5;
     });
   }
+
   @override
   void dispose() {
     _tabController.dispose();
@@ -166,52 +173,54 @@ class _NestedBar_areaState extends State<NestedBar_area>
             children: <Widget>[
               Card(
                 margin: const EdgeInsets.all(16.0),
-                child:  ListView.builder(
-                          itemCount: USmovie.length,
-                          itemBuilder: (context, ind) {
-                          return MovieListCard(
-                          movie: USmovie[ind]);
-                          },
-              ),),
+                child: ListView.builder(
+                  itemCount: USmovie.length,
+                  itemBuilder: (context, ind) {
+                    return MovieListCard(movie: USmovie[ind]);
+                  },
+                ),
+              ),
               Card(
                 margin: const EdgeInsets.all(16.0),
-                child:  ListView.builder(
+                child: ListView.builder(
                   itemCount: EUmovie.length,
                   itemBuilder: (context, ind) {
-                    return MovieListCard(
-                        movie: EUmovie[ind]);
+                    return MovieListCard(movie: EUmovie[ind]);
                   },
-                ),),
+                ),
+              ),
               Card(
                 margin: const EdgeInsets.all(16.0),
-                child:  ListView.builder(
+                child: ListView.builder(
                   itemCount: CNmovie.length,
                   itemBuilder: (context, ind) {
-                    return MovieListCard(
-                        movie: CNmovie[ind]);
+                    return MovieListCard(movie: CNmovie[ind]);
                   },
-                ),),
+                ),
+              ),
               Card(
                 margin: const EdgeInsets.all(16.0),
-                child:  ListView.builder(
+                child: ListView.builder(
                   itemCount: HKTWmovie.length,
                   itemBuilder: (context, ind) {
-                    return MovieListCard(
-                        movie: HKTWmovie[ind]);
+                    return MovieListCard(movie: HKTWmovie[ind]);
                   },
-                ),),
+                ),
+              ),
               Card(
                 margin: const EdgeInsets.all(16.0),
-                child:  ListView.builder(
+                child: ListView.builder(
                   itemCount: JPmovie.length,
                   itemBuilder: (context, ind) {
-                    return MovieListCard(
-                        movie: JPmovie[ind]);
+                    return MovieListCard(movie: JPmovie[ind]);
                   },
-                ),),
+                ),
+              ),
               Card(
-                margin: const EdgeInsets.all(16.0),
-                child:  Center(child: Text('你还没有看过该地区的电影哦(＾-＾)v'),))
+                  margin: const EdgeInsets.all(16.0),
+                  child: Center(
+                    child: Text('你还没有看过该地区的电影哦(＾-＾)v'),
+                  ))
             ],
           ),
         ),
@@ -307,10 +316,6 @@ class _NestedcollectionState extends State<NestedBar_collection>
   }
 }
 
-
-
-
-
 class MovieListCard extends StatelessWidget {
   SingleMovie movie;
   MovieListCard({super.key, required this.movie});
@@ -334,7 +339,6 @@ class MovieListCard extends StatelessWidget {
       onTap: () async {
         //createTables(movie);
         Get.to(MoviePage(movie: movie), transition: Transition.fadeIn);
-
       },
       child: Card(
         elevation: 3,
@@ -369,7 +373,6 @@ class MovieListCard extends StatelessWidget {
     );
   }
 }
-
 
 class ratingMovieListCard extends StatelessWidget {
   SingleMovie movie;
@@ -460,16 +463,25 @@ class ratingMovieListCard extends StatelessWidget {
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                    Text('上映日期: ${movie.releaseDate}', style: const TextStyle(fontSize: 14),),
-                    Text('TMDB评分: ${movie.voteAverage} (${movie.voteCount})', style: const TextStyle(fontSize: 14),),],),
-                  SizedBox(width: 10,),
-                  ratingCardStatic(),
-                ]),
+              Row(children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '上映日期: ${movie.releaseDate}',
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                    Text(
+                      'TMDB评分: ${movie.voteAverage} (${movie.voteCount})',
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                ratingCardStatic(),
+              ]),
             ],
           ),
         ),
@@ -477,4 +489,3 @@ class ratingMovieListCard extends StatelessWidget {
     );
   }
 }
-

@@ -205,9 +205,9 @@ WHERE watchStatus = 'watched';
         backgroundColor: Colors.transparent, // 选择一个主题颜色
         elevation: 0, // 阴影强度
         title: const Text(
-          "Statistics", // 标题文本
+          "我的观影统计", // 标题文本
           style: TextStyle(
-            fontSize: 30.0,
+            fontSize: 20.0,
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),

@@ -19,7 +19,7 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: RichText(
           text: const TextSpan(
-            style: TextStyle(color: Colors.white, fontSize: 20),
+            style: TextStyle(color: Colors.white, fontSize: 20,fontWeight: FontWeight.bold,),
             text: '我的观影记录',
           ),
         ),
