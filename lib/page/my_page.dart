@@ -37,6 +37,7 @@ class _MyPageState extends State<MyPage> {
     final tmp = await ProjectDatabase().getwantwatchdata();
     setState(() {
       wanttowatchmovie = tmp;
+      print(tmp[0].originalCountry);
     });
   }
 
@@ -112,6 +113,10 @@ class _NestedBar_areaState extends State<NestedBar_area>
     with TickerProviderStateMixin {
   late final TabController _tabController;
   List<SingleMovie> USmovie = [];
+  List<SingleMovie> JPmovie = [];
+  List<SingleMovie> CNmovie = [];
+  List<SingleMovie> HKTWmovie = [];
+  List<SingleMovie> EUmovie = [];
 
   @override
   void initState() {
@@ -125,9 +130,13 @@ class _NestedBar_areaState extends State<NestedBar_area>
 
     //返回多个值？？？
     final tmp = await ProjectDatabase().getcountrydata();
-    print(USmovie.length);
+
     setState(() {
-    USmovie = tmp;
+    USmovie = tmp.item1;
+    EUmovie = tmp.item2;
+    CNmovie = tmp.item3;
+    HKTWmovie = tmp.item4;
+    JPmovie = tmp.item5;
     });
   }
   @override
@@ -146,7 +155,7 @@ class _NestedBar_areaState extends State<NestedBar_area>
             Tab(text: '美国'),
             Tab(text: '欧洲'),
             Tab(text: '中国大陆'),
-            Tab(text: '港澳台'),
+            Tab(text: '港台'),
             Tab(text: '日韩'),
             Tab(text: '其他'),
           ],
@@ -167,48 +176,42 @@ class _NestedBar_areaState extends State<NestedBar_area>
               Card(
                 margin: const EdgeInsets.all(16.0),
                 child:  ListView.builder(
-                  itemCount: USmovie.length,
+                  itemCount: EUmovie.length,
                   itemBuilder: (context, ind) {
                     return MovieListCard(
-                        movie: USmovie[ind]);
+                        movie: EUmovie[ind]);
                   },
                 ),),
               Card(
                 margin: const EdgeInsets.all(16.0),
                 child:  ListView.builder(
-                  itemCount: USmovie.length,
+                  itemCount: CNmovie.length,
                   itemBuilder: (context, ind) {
                     return MovieListCard(
-                        movie: USmovie[ind]);
+                        movie: CNmovie[ind]);
                   },
                 ),),
               Card(
                 margin: const EdgeInsets.all(16.0),
                 child:  ListView.builder(
-                  itemCount: USmovie.length,
+                  itemCount: HKTWmovie.length,
                   itemBuilder: (context, ind) {
                     return MovieListCard(
-                        movie: USmovie[ind]);
+                        movie: HKTWmovie[ind]);
                   },
                 ),),
               Card(
                 margin: const EdgeInsets.all(16.0),
                 child:  ListView.builder(
-                  itemCount: USmovie.length,
+                  itemCount: JPmovie.length,
                   itemBuilder: (context, ind) {
                     return MovieListCard(
-                        movie: USmovie[ind]);
+                        movie: JPmovie[ind]);
                   },
                 ),),
               Card(
                 margin: const EdgeInsets.all(16.0),
-                child:  ListView.builder(
-                  itemCount: USmovie.length,
-                  itemBuilder: (context, ind) {
-                    return MovieListCard(
-                        movie: USmovie[ind]);
-                  },
-                ),)
+                child:  Center(child: Text('你还没有看过该地区的电影哦(＾-＾)v'),))
             ],
           ),
         ),
@@ -331,6 +334,7 @@ class MovieListCard extends StatelessWidget {
       onTap: () async {
         //createTables(movie);
         Get.to(MoviePage(movie: movie), transition: Transition.fadeIn);
+
       },
       child: Card(
         elevation: 3,

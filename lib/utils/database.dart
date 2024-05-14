@@ -95,7 +95,7 @@ class ProjectDatabase {
       media.id = id; // 确保更新对象的 id 属性
       return id;
     } catch (e) {
-      print('An error occurred while inserting a movie: $e');
+      print('An error occurred while inserting a movie: ${media.tmdbId}');
       return 0; // 抛出一个自定义的错误
     }
   }
@@ -155,7 +155,7 @@ class ProjectDatabase {
       movie.id = id; // 确保更新对象的 id 属性
       return movie;
     } catch (e) {
-      print('An error occurred while inserting a movie: $e');
+      print('An error occurred while inserting a movie: ${movie.title}');
       return movie; // 抛出一个自定义的错误
     }
   }
@@ -275,21 +275,32 @@ class ProjectDatabase {
     return tmp;
   }
   //3.mypage展示美国电影
-  Future<List<SingleMovie>> getcountrydata() async {
+  Future<Tuple5<List<SingleMovie>,List<SingleMovie>,List<SingleMovie>,List<SingleMovie>,List<SingleMovie>>> getcountrydata() async {
     final db = await _instance.database;
     String queryus = "select info.* from infoTable info,myTable mt where info.tmdbId=mt.tmdbId and info.originalCountry='US' and mt.watchStatus='watched' order by mt.watchedDate DESC";
+    String queryjp = "select info.* from infoTable info,myTable mt where info.tmdbId=mt.tmdbId and (info.originalCountry='JP' OR info.originalCountry='KR') and mt.watchStatus='watched' order by mt.watchedDate DESC";
+    String querycn = "select info.* from infoTable info,myTable mt where info.tmdbId=mt.tmdbId and info.originalCountry='CN' and mt.watchStatus='watched' order by mt.watchedDate DESC";
+    String queryhktw = "select info.* from infoTable info,myTable mt where info.tmdbId=mt.tmdbId and (info.originalCountry='HK' OR info.originalCountry='TW') and mt.watchStatus='watched' order by mt.watchedDate DESC";
+    String queryeurope = "select info.* from infoTable info,myTable mt where info.tmdbId=mt.tmdbId and info.originalCountry IN ('AT', 'BE', 'BG', 'CH', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FI', 'FR', 'GB', 'GR', 'HR', 'HU', 'IE', 'IS', 'IT', 'LT', 'LU', 'LV', 'MC', 'MD', 'MK', 'MT', 'NL', 'NO', 'PL', 'PT', 'RO', 'RS', 'RU', 'SE', 'SI', 'SK', 'TR', 'UA') and mt.watchStatus='watched' order by mt.watchedDate DESC";
 
-    final s = await db.rawQuery(queryus);
+    final us = await db.rawQuery(queryus);
+    final jp = await db.rawQuery(queryjp);
+    final cn = await db.rawQuery(querycn);
+    final hktw = await db.rawQuery(queryhktw);
+    final europe = await db.rawQuery(queryeurope);
+    List<SingleMovie> usdata = us.map((json) => SingleMovie.fromJson(json)).toList();
+    List<SingleMovie> jpdata = jp.map((json) => SingleMovie.fromJson(json)).toList();
+    List<SingleMovie> cndata = cn.map((json) => SingleMovie.fromJson(json)).toList();
+    List<SingleMovie> hktwdata = hktw.map((json) => SingleMovie.fromJson(json)).toList();
+    List<SingleMovie> europedata = europe.map((json) => SingleMovie.fromJson(json)).toList();
 
-    List<SingleMovie> tmp =
-    s.map((json) => SingleMovie.fromJson(json)).toList();
-    return tmp;
+    return Tuple5(usdata, europedata,cndata, hktwdata, jpdata);
   }
 
   //4.mypage展示评分过的电影（排序）
   Future<List<Map<SingleMovie,double>>> getratingdata() async {
     final db = await _instance.database;
-    String queryrating = "select info.* from infoTable info,myTable mt where info.tmdbId=mt.tmdbId and mt.myRating>0 and mt.watchStatus='watched' order by mt.myRating DESC, mt.wantedDate DESC";
+    String queryrating = "select info.* from infoTable info,myTable mt where info.tmdbId=mt.tmdbId and mt.myRating>0 and mt.watchStatus='watched' order by mt.myRating DESC, mt.watchedDate DESC";
     List<Map<SingleMovie,double>> result = [];
     final s = await db.rawQuery(queryrating);
     List<SingleMovie> tmp =

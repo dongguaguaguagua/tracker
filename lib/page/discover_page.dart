@@ -75,14 +75,17 @@ class DiscoverPage extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          const SizedBox(height: 20),
-          SearchBar(
-            hintText: '搜索你的电影',
-            leading:
-                const Icon(Icons.search, color: Colors.deepPurple), // 调整图标颜色
-            onTap: () {
-              Get.to(const SearchBarView(), transition: Transition.fade);
-            },
+          Padding(
+            padding: const EdgeInsets.only(top: 40, left: 20, right: 20),
+            child: SearchBar(
+              hintText: '搜索你的电影',
+              leading:
+                  const Icon(Icons.search, color: Colors.deepPurple), // 调整图标颜色
+              onTap: () {
+                Get.to(() => const SearchBarView(),
+                    transition: Transition.fade);
+              },
+            ),
           ),
           const SizedBox(height: 20), // 添加适当的间距
           Expanded(

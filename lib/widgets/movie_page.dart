@@ -137,7 +137,7 @@ class _MoviePageState extends State<MoviePage> {
       appBar: AppBar(
         backgroundColor: movieBackgroundColor,
         toolbarHeight: 80,
-        //title: Text(movie.title!),
+        // title: Text(widget.movie.title!),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           color: movieTextColor,
@@ -330,7 +330,7 @@ class _MoviePageState extends State<MoviePage> {
         progressIndicatorBuilder: (context, url, downloadProgress) =>
             CircularProgressIndicator(value: downloadProgress.progress),
         errorWidget: (context, url, error) => const Icon(Icons.error),
-        width: 200,
+        width: 160,
         height: 250,
       ),
     );
@@ -483,7 +483,7 @@ class _MoviePageState extends State<MoviePage> {
         backgroundColor: Colors.white, // 按钮颜色
         foregroundColor: Colors.deepPurple, // 文本颜色
         shadowColor: Colors.deepPurple, // 阴影颜色
-        minimumSize: const Size(140, 50), // 按钮大小
+        minimumSize: const Size(120, 50), // 按钮大小
       ),
     );
   }
@@ -505,7 +505,7 @@ class _MoviePageState extends State<MoviePage> {
         backgroundColor: Colors.white, // 按钮颜色
         foregroundColor: Colors.deepPurple, // 文本颜色
         shadowColor: Colors.deepPurple, // 阴影颜色
-        minimumSize: const Size(140, 50), // 按钮大小
+        minimumSize: const Size(120, 50), // 按钮大小
       ),
     );
   }
@@ -568,7 +568,7 @@ class _MoviePageState extends State<MoviePage> {
         backgroundColor: Colors.white, // 按钮颜色
         foregroundColor: Colors.deepPurple, // 文本颜色
         shadowColor: Colors.deepPurple, // 阴影颜色
-        minimumSize: const Size(140, 50), // 按钮大小
+        minimumSize: const Size(120, 50), // 按钮大小
       ),
     );
   }
