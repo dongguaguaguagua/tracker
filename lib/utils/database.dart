@@ -263,20 +263,64 @@ class ProjectDatabase {
     return result;
   }
 
-  //mypage展示合集的数据获取
+  //2.mypage展示合集的数据获取
   Future<List<SingleMovie>> getcollectdata(int i) async {
     final db = await _instance.database;
     String query3 =
-        "select info.* from myCollections mc,infoTable info,myTable mt where info.tmdbId=mt.tmdbId and mt.id=mc.myMediaId and mc.myCollectionId='$i' ";
+        "select info.* from myCollections mc,infoTable info,myTable mt where info.tmdbId=mt.tmdbId and mt.id=mc.myMediaId and mc.myCollectionId='$i' and mt.watchStatus='watched' order by mt.watchedDate DESC";
     final s = await db.rawQuery(query3);
 
     List<SingleMovie> tmp =
         s.map((json) => SingleMovie.fromJson(json)).toList();
     return tmp;
   }
+  //3.mypage展示美国电影
+  Future<List<SingleMovie>> getcountrydata() async {
+    final db = await _instance.database;
+    String queryus = "select info.* from infoTable info,myTable mt where info.tmdbId=mt.tmdbId and info.originalCountry='US' and mt.watchStatus='watched' order by mt.watchedDate DESC";
+
+    final s = await db.rawQuery(queryus);
+
+    List<SingleMovie> tmp =
+    s.map((json) => SingleMovie.fromJson(json)).toList();
+    return tmp;
+  }
+
+  //4.mypage展示评分过的电影（排序）
+  Future<List<Map<SingleMovie,double>>> getratingdata() async {
+    final db = await _instance.database;
+    String queryrating = "select info.* from infoTable info,myTable mt where info.tmdbId=mt.tmdbId and mt.myRating>0 and mt.watchStatus='watched' order by mt.myRating DESC, mt.wantedDate DESC";
+    List<Map<SingleMovie,double>> result = [];
+    final s = await db.rawQuery(queryrating);
+    List<SingleMovie> tmp =
+    s.map((json) => SingleMovie.fromJson(json)).toList();
+
+    for (var t in tmp){
+      final a = await db.rawQuery("select * from myTable where tmdbId=${t.tmdbId}");
+      List<MyMedia> tmpp =
+      a.map((json) => MyMedia.fromJson(json)).toList();
+      double rating = a[0]['myRating'] as double;
+      result.add({t:rating});
+    }
+
+    return result;
+  }
+  //4.mypage展示想看的数据获取
+  Future<List<SingleMovie>> getwantwatchdata() async {
+    final db = await _instance.database;
+    String querywantwatch =
+        "select info.* from infoTable info,myTable mt where info.tmdbId=mt.tmdbId and mt.watchStatus='wanttowatch' order by mt.wantToWatchDate DESC";
+    final s = await db.rawQuery(querywantwatch);
+
+    List<SingleMovie> tmp =
+    s.map((json) => SingleMovie.fromJson(json)).toList();
+    return tmp;
+  }
+
+
 }
 
-//2.
+
 
 class Table {
   final String tableName;

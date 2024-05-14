@@ -664,3 +664,4 @@ class GenreInfo {
 );
   ''';
 }
+

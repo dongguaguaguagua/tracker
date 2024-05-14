@@ -161,8 +161,8 @@ class MovieCard extends StatelessWidget {
     return GestureDetector(
       // 点击就导航到MoviePage
       onTap: () async {
-        createTables(movie); //创建改电影的所有表，到本地media.db,有些列初始为空，待update
-        Get.to(MoviePage(movie: movie), transition: Transition.fadeIn);
+        await createTables(movie); //创建改电影的所有表，到本地media.db,有些列初始为空，待update
+        Get.to(() => MoviePage(movie: movie), transition: Transition.fadeIn);
       },
       // 一个电影美化过的卡片
       child: Card(

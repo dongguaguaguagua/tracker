@@ -18,6 +18,28 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
+  List<Map<SingleMovie,double>> ratingedmovie = [];
+  List<SingleMovie> wanttowatchmovie = [];
+  @override
+  void initState() {
+    super.initState();
+    getRatingdata();
+    getWantwatchdata();
+  }
+
+  Future<void> getRatingdata() async{
+    final tmp = await ProjectDatabase().getratingdata();
+    setState(() {
+      ratingedmovie = tmp;
+    });
+  }
+  Future<void> getWantwatchdata() async{
+    final tmp = await ProjectDatabase().getwantwatchdata();
+    setState(() {
+      wanttowatchmovie = tmp;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -49,13 +71,26 @@ class _MyPageState extends State<MyPage> {
         ),
         body: TabBarView(
           children: <Widget>[
-            Center(
-              child: Text("It's 待观看的电影 here"),
+            ListView.builder(
+              itemCount: wanttowatchmovie.length,
+              itemBuilder: (context, ind) {
+                return MovieListCard(
+                  movie: wanttowatchmovie[ind],
+                );
+                // return MovieListCard(movie: _searchResults[index]);
+              },
             ),
             NestedBar_collection('合集'),
             const NestedBar_area('地区'),
-            Center(
-              child: Text("It's 自己的评分 here"),
+            ListView.builder(
+              itemCount: ratingedmovie.length,
+              itemBuilder: (context, ind) {
+                return ratingMovieListCard(
+                    movie: ratingedmovie[ind].keys.first,
+                    rating: ratingedmovie[ind].values.first,
+                );
+                // return MovieListCard(movie: _searchResults[index]);
+              },
             ),
           ],
         ),
@@ -70,19 +105,31 @@ class NestedBar_area extends StatefulWidget {
   final String outerTab;
 
   @override
-  State<NestedBar_area> createState() => _NestedTabBarState();
+  State<NestedBar_area> createState() => _NestedBar_areaState();
 }
 
-class _NestedTabBarState extends State<NestedBar_area>
+class _NestedBar_areaState extends State<NestedBar_area>
     with TickerProviderStateMixin {
   late final TabController _tabController;
+  List<SingleMovie> USmovie = [];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 6, vsync: this);
+    getCountrydata();
+
   }
 
+  Future<void> getCountrydata() async {
+
+    //返回多个值？？？
+    final tmp = await ProjectDatabase().getcountrydata();
+    print(USmovie.length);
+    setState(() {
+    USmovie = tmp;
+    });
+  }
   @override
   void dispose() {
     _tabController.dispose();
@@ -110,28 +157,58 @@ class _NestedTabBarState extends State<NestedBar_area>
             children: <Widget>[
               Card(
                 margin: const EdgeInsets.all(16.0),
-                child: Center(child: Text('${widget.outerTab}: Overview tab')),
-              ),
+                child:  ListView.builder(
+                          itemCount: USmovie.length,
+                          itemBuilder: (context, ind) {
+                          return MovieListCard(
+                          movie: USmovie[ind]);
+                          },
+              ),),
               Card(
                 margin: const EdgeInsets.all(16.0),
-                child: Center(child: Text('${widget.outerTab}: Overview tab')),
-              ),
+                child:  ListView.builder(
+                  itemCount: USmovie.length,
+                  itemBuilder: (context, ind) {
+                    return MovieListCard(
+                        movie: USmovie[ind]);
+                  },
+                ),),
               Card(
                 margin: const EdgeInsets.all(16.0),
-                child: Center(child: Text('${widget.outerTab}: Overview tab')),
-              ),
+                child:  ListView.builder(
+                  itemCount: USmovie.length,
+                  itemBuilder: (context, ind) {
+                    return MovieListCard(
+                        movie: USmovie[ind]);
+                  },
+                ),),
               Card(
                 margin: const EdgeInsets.all(16.0),
-                child: Center(child: Text('${widget.outerTab}: Overview tab')),
-              ),
+                child:  ListView.builder(
+                  itemCount: USmovie.length,
+                  itemBuilder: (context, ind) {
+                    return MovieListCard(
+                        movie: USmovie[ind]);
+                  },
+                ),),
               Card(
                 margin: const EdgeInsets.all(16.0),
-                child: Center(child: Text('${widget.outerTab}: Overview tab')),
-              ),
+                child:  ListView.builder(
+                  itemCount: USmovie.length,
+                  itemBuilder: (context, ind) {
+                    return MovieListCard(
+                        movie: USmovie[ind]);
+                  },
+                ),),
               Card(
                 margin: const EdgeInsets.all(16.0),
-                child: Center(child: Text('${widget.outerTab}: Overview tab')),
-              )
+                child:  ListView.builder(
+                  itemCount: USmovie.length,
+                  itemBuilder: (context, ind) {
+                    return MovieListCard(
+                        movie: USmovie[ind]);
+                  },
+                ),)
             ],
           ),
         ),
@@ -146,10 +223,10 @@ class NestedBar_collection extends StatefulWidget {
   final String outerTab;
 
   @override
-  State<NestedBar_collection> createState() => _NestedTabBarState1();
+  State<NestedBar_collection> createState() => _NestedcollectionState();
 }
 
-class _NestedTabBarState1 extends State<NestedBar_collection>
+class _NestedcollectionState extends State<NestedBar_collection>
     with TickerProviderStateMixin {
   late TabController _tabController;
   int length = 1; //外部传入
@@ -227,28 +304,32 @@ class _NestedTabBarState1 extends State<NestedBar_collection>
   }
 }
 
+
+
+
+
 class MovieListCard extends StatelessWidget {
   SingleMovie movie;
   MovieListCard({super.key, required this.movie});
   @override
   Widget build(BuildContext context) {
-    Future<void> createTables(SingleMovie movie) async {
-      final media = MyMedia(
-        tmdbId: movie.tmdbId,
-        mediaType: "movie",
-        watchStatus: "unwatched",
-        watchTimes: 0,
-        myRating: 0.0,
-        myReview: '',
-      );
-      await ProjectDatabase().SI_add(movie);
-      await ProjectDatabase().MM_add(media);
-      await Add_country_runtime_genre(movie);
-    }
+    // Future<void> createTables(SingleMovie movie) async {
+    //   final media = MyMedia(
+    //     tmdbId: movie.tmdbId,
+    //     mediaType: "movie",
+    //     watchStatus: "unwatched",
+    //     watchTimes: 0,
+    //     myRating: 0.0,
+    //     myReview: '',
+    //   );
+    //   await ProjectDatabase().SI_add(movie);
+    //   await ProjectDatabase().MM_add(media);
+    //   await Add_country_runtime_genre(movie);
+    // }
 
     return GestureDetector(
       onTap: () async {
-        createTables(movie);
+        //createTables(movie);
         Get.to(MoviePage(movie: movie), transition: Transition.fadeIn);
       },
       child: Card(
@@ -284,3 +365,112 @@ class MovieListCard extends StatelessWidget {
     );
   }
 }
+
+
+class ratingMovieListCard extends StatelessWidget {
+  SingleMovie movie;
+  double rating;
+  ratingMovieListCard({super.key, required this.movie, required this.rating});
+  @override
+  Widget build(BuildContext context) {
+    // Future<void> createTables(SingleMovie movie) async {
+    //   final media = MyMedia(
+    //     tmdbId: movie.tmdbId,
+    //     mediaType: "movie",
+    //     watchStatus: "unwatched",
+    //     watchTimes: 0,
+    //     myRating: 0.0,
+    //     myReview: '',
+    //   );
+    //   await ProjectDatabase().SI_add(movie);
+    //   await ProjectDatabase().MM_add(media);
+    //   await Add_country_runtime_genre(movie);
+    // }
+
+    // 不可评分的5星（仅用于展示）
+// 评分widget的实现
+    Widget ratingCardStatic() {
+      return Card(
+        elevation: 1, // 设置卡片的阴影
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        margin: const EdgeInsets.all(1.0),
+        child: Padding(
+          padding: const EdgeInsets.all(6.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Wrap(
+                spacing: 5.0, // 设置水平间距
+                alignment: WrapAlignment.start,
+                children: <Widget>[
+                  const Text(
+                    '我的评分',
+                    style: TextStyle(
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Padding(
+                    // 史山。不知道为什么Wrap()会导致俩元素不在一行。Row()就没有这个问题。
+                    padding: const EdgeInsets.only(top: 0.0),
+                    child: Wrap(
+                      alignment: WrapAlignment.start,
+                      children: List.generate(5, (index) {
+                        return Icon(
+                          index < rating ? Icons.star : Icons.star_border,
+                          color: Colors.amber,
+                        );
+                      }),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return GestureDetector(
+      onTap: () async {
+        //createTables(movie);
+        Get.to(MoviePage(movie: movie), transition: Transition.fadeIn);
+      },
+      child: Card(
+        elevation: 1,
+        child: ListTile(
+          leading: Container(
+            child: CachedNetworkImage(
+              imageUrl: "https://image.tmdb.org/t/p/w500/${movie.posterPath}",
+              progressIndicatorBuilder: (context, url, downloadProgress) =>
+                  CircularProgressIndicator(value: downloadProgress.progress),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+            ),
+          ),
+          title: Text(
+            movie.title!,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                    Text('上映日期: ${movie.releaseDate}', style: const TextStyle(fontSize: 14),),
+                    Text('TMDB评分: ${movie.voteAverage} (${movie.voteCount})', style: const TextStyle(fontSize: 14),),],),
+                  SizedBox(width: 10,),
+                  ratingCardStatic(),
+                ]),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
