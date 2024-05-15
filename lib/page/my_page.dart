@@ -173,7 +173,9 @@ class _NestedBar_areaState extends State<NestedBar_area>
             children: <Widget>[
               Card(
                 margin: const EdgeInsets.all(16.0),
-                child: ListView.builder(
+                child: USmovie.isEmpty ? Center(
+                  child: Text('你还没有看过该地区的电影哦(＾-＾)v'),
+                ) : ListView.builder(
                   itemCount: USmovie.length,
                   itemBuilder: (context, ind) {
                     return MovieListCard(movie: USmovie[ind]);
@@ -182,7 +184,9 @@ class _NestedBar_areaState extends State<NestedBar_area>
               ),
               Card(
                 margin: const EdgeInsets.all(16.0),
-                child: ListView.builder(
+                child: EUmovie.isEmpty? Center(
+                  child: Text('你还没有看过该地区的电影哦(＾-＾)v'),
+                ) : ListView.builder(
                   itemCount: EUmovie.length,
                   itemBuilder: (context, ind) {
                     return MovieListCard(movie: EUmovie[ind]);
@@ -191,7 +195,9 @@ class _NestedBar_areaState extends State<NestedBar_area>
               ),
               Card(
                 margin: const EdgeInsets.all(16.0),
-                child: ListView.builder(
+                child: CNmovie.isEmpty ? Center(
+                  child: Text('你还没有看过该地区的电影哦(＾-＾)v'),
+                ) : ListView.builder(
                   itemCount: CNmovie.length,
                   itemBuilder: (context, ind) {
                     return MovieListCard(movie: CNmovie[ind]);
@@ -200,16 +206,22 @@ class _NestedBar_areaState extends State<NestedBar_area>
               ),
               Card(
                 margin: const EdgeInsets.all(16.0),
-                child: ListView.builder(
-                  itemCount: HKTWmovie.length,
-                  itemBuilder: (context, ind) {
-                    return MovieListCard(movie: HKTWmovie[ind]);
+                child: HKTWmovie.isEmpty ? Center(
+                  child: Text('你还没有看过该地区的电影哦(＾-＾)v'),
+                  ) :
+                  ListView.builder(
+                    itemCount: HKTWmovie.length,
+                    itemBuilder: (context, ind) {
+                      return MovieListCard(movie: HKTWmovie[ind]);
                   },
                 ),
               ),
               Card(
                 margin: const EdgeInsets.all(16.0),
-                child: ListView.builder(
+                child: JPmovie.isEmpty
+                  ? Center(
+                    child: Text('你还没有看过该地区的电影哦(＾-＾)v'),
+                  ) : ListView.builder(
                   itemCount: JPmovie.length,
                   itemBuilder: (context, ind) {
                     return MovieListCard(movie: JPmovie[ind]);
