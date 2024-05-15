@@ -397,15 +397,7 @@ class ratingMovieListCard extends StatelessWidget {
     // 不可评分的5星（仅用于展示）
 // 评分widget的实现
     Widget ratingCardStatic() {
-      return Card(
-        elevation: 1, // 设置卡片的阴影
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5.0),
-        ),
-        margin: const EdgeInsets.all(1.0),
-        child: Padding(
-          padding: const EdgeInsets.all(6.0),
-          child: Column(
+      return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Wrap(
@@ -428,8 +420,6 @@ class ratingMovieListCard extends StatelessWidget {
                 ],
               ),
             ],
-          ),
-        ),
       );
     }
 
