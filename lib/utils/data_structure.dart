@@ -440,6 +440,7 @@ class GenreFields {
 
   static const String id = 'id';
   static const String genre = 'genre';
+
   static const String genreId = 'genreId';
 }
 
@@ -447,6 +448,7 @@ class Genre {
   int? id;
   int? genreId;
   String? genre;
+
 
   Genre({
     this.id,
@@ -473,17 +475,117 @@ class Genre {
       GenreFields.id: id,
       GenreFields.genreId: genreId,
       GenreFields.genre: genre,
+
     };
   }
 
   static const String createSQL = """
       create table if not exists genreTable(
-        genreId TEXT,
+        genreId TEXT UNIQUE,
         genre   TEXT,
-        id      integer constraint genre_pk primary key
+        id      integer constraint genre_pk primary key autoincrement
       );
       """;
 }
+
+
+
+class GenreInfoFields {
+  static final List<String> values = [
+    /// Add all fields
+    id, genreId1, genreId2,genreId3,genreId4,genreId5,tmdbId,
+  ];
+  static const String id = 'id';
+  static const String genreId1 = 'genreId1';
+  static const String genreId2 = 'genreId2';
+  static const String genreId3 = 'genreId3';
+  static const String genreId4 = 'genreId4';
+  static const String genreId5 = 'genreId5';
+  static const String tmdbId = 'tmdbId';
+}
+
+class GenreInfo {
+  int? id;
+  int? genreId1;
+  int? genreId2;
+  int? genreId3;
+  int? genreId4;
+  int? genreId5;
+  int? tmdbId;
+
+  GenreInfo({
+    this.id,
+    this.genreId1,
+    this.genreId2,
+    this.genreId3,
+    this.genreId4,
+    this.genreId5,
+    this.tmdbId,
+  });
+
+  factory GenreInfo.fromJson(Map<String, dynamic> json) {
+    return GenreInfo(
+      id: json[GenreInfoFields.id] as int?,
+      genreId1: json[GenreInfoFields.genreId1] as int?,
+      genreId2: json[GenreInfoFields.genreId2] as int?,
+      genreId3: json[GenreInfoFields.genreId3] as int?,
+      genreId4: json[GenreInfoFields.genreId4] as int?,
+      genreId5: json[GenreInfoFields.genreId5] as int?,
+      tmdbId: json[GenreInfoFields.tmdbId] as int?,
+    );
+  }
+
+  addJson(Map<String, dynamic> json) {
+    id ??= int.parse(json[GenreInfoFields.id]);
+    genreId1 ??= int.parse(json[GenreInfoFields.genreId1]);
+    genreId2 ??= int.parse(json[GenreInfoFields.genreId2]);
+    genreId3 ??= int.parse(json[GenreInfoFields.genreId3]);
+    genreId4 ??= int.parse(json[GenreInfoFields.genreId4]);
+    genreId5 ??= int.parse(json[GenreInfoFields.genreId5]);
+    tmdbId ??= int.parse(json[GenreInfoFields.tmdbId]);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      GenreInfoFields.id: id,
+      GenreInfoFields.genreId1: genreId1,
+      GenreInfoFields.genreId2: genreId2,
+      GenreInfoFields.genreId3: genreId3,
+      GenreInfoFields.genreId4: genreId4,
+      GenreInfoFields.genreId5: genreId5,
+      GenreInfoFields.tmdbId: tmdbId,
+    };
+  }
+
+  static const String createSQL = '''
+ create table GenreInfo
+(
+    genreId1 integer
+        constraint GenreInfo_genreTable_genreId_fk
+            references genreTable (genreId),
+    genreId2 integer
+        constraint GenreInfo_genreTable_genreId_fk
+            references genreTable (genreId),
+    genreId3 integer
+        constraint GenreInfo_genreTable_genreId_fk
+            references genreTable (genreId),
+    genreId4 integer
+        constraint GenreInfo_genreTable_genreId_fk
+            references genreTable (genreId),
+    genreId5 integer
+        constraint GenreInfo_genreTable_genreId_fk
+            references genreTable (genreId),
+    id      integer
+        constraint GenreInfo_pk
+            primary key autoincrement,
+    tmdbId  integer UNIQUE
+        constraint GenreInfo_infoTable_tmdbId_fk
+            references infoTable (tmdbId)
+);
+  ''';
+}
+
+
 
 class MyCollectionInstancesFields {
   static final List<String> values = [
@@ -606,62 +708,4 @@ class CollectionInstances {
   ''';
 }
 
-class GenreInfoFields {
-  static final List<String> values = [
-    /// Add all fields
-    id, genreId, tmdbId,
-  ];
-  static const String id = 'id';
-  static const String genreId = 'genreId';
-  static const String tmdbId = 'tmdbId';
-}
-
-class GenreInfo {
-  int? id;
-  int? genreId;
-  int? tmdbId;
-
-  GenreInfo({
-    this.id,
-    this.genreId,
-    this.tmdbId,
-  });
-
-  factory GenreInfo.fromJson(Map<String, dynamic> json) {
-    return GenreInfo(
-      id: json[GenreInfoFields.id] as int?,
-      genreId: json[GenreInfoFields.genreId] as int?,
-      tmdbId: json[GenreInfoFields.tmdbId] as int?,
-    );
-  }
-
-  addJson(Map<String, dynamic> json) {
-    id ??= int.parse(json[GenreInfoFields.id]);
-    genreId ??= int.parse(json[GenreInfoFields.genreId]);
-    tmdbId ??= int.parse(json[GenreInfoFields.tmdbId]);
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      GenreInfoFields.id: id,
-      GenreInfoFields.genreId: genreId,
-      GenreInfoFields.tmdbId: tmdbId,
-    };
-  }
-
-  static const String createSQL = '''
- create table GenreInfo
-(
-    genreId integer
-        constraint GenreInfo_genreTable_genreId_fk
-            references genreTable (genreId),
-    id      integer
-        constraint GenreInfo_pk
-            primary key autoincrement,
-    tmdbId  integer
-        constraint GenreInfo_infoTable_tmdbId_fk
-            references infoTable (tmdbId)
-);
-  ''';
-}
 

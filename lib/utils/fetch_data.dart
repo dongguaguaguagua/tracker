@@ -62,6 +62,29 @@ Future<void> Add_country_runtime_genre(SingleMovie movie) async {
   movie.originalCountry = originalCountry[0];
 
   await ProjectDatabase().SI_update(movie);
+
+  //获取movie genere流派,加入genreInfo
+  final genres = jsonDecode(jsonStr)['genres'];
+  int len = genres.length;
+  final genre = GenreInfo();//加入该电影的genre信息
+  genre.genreId1 = len>=1 ? genres[0]['id'] : null;
+  genre.genreId2 = len>=2 ? genres[1]['id'] : null;
+  genre.genreId3 = len>=3 ? genres[2]['id'] : null;
+  genre.genreId4 = len>=4 ? genres[3]['id'] : null;
+  genre.genreId5 = len>=5 ? genres[4]['id'] : null;
+  genre.tmdbId = movie.tmdbId;
+  await ProjectDatabase().GE_add(genre);
+
+  //可能会有新的流派，加入本地GenreTable表
+  for(int i=0;i<genres.length;i++){
+    final tmp = Genre(
+      genre: genres[i]['name'],
+      genreId: genres[i]['id'],
+    );
+    ProjectDatabase().GT_add(tmp);
+  }
+
+
 }
 
 // 获取演员表

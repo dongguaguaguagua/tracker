@@ -34,19 +34,7 @@ class SettingsPage extends StatelessWidget {
             onPressed: () => print('hello'),
             child: const Text('测试按钮'),
           ),
-          ElevatedButton(
-            onPressed: () async {
-              final db = ProjectDatabase();
-              var genreIns = Genre(
-                genre: 'b',
-                genreId: 2,
-              );
-              var singleMovie = SingleMovie();
-              var genres = await db.singleMovieTable.magic(singleMovie);
-              print(genres[0].toJson());
-            },
-            child: const Text('进行插入操作'),
-          ),
+
           ElevatedButton(
             onPressed: () async {
               final result = await ProjectDatabase().sudoQuery(

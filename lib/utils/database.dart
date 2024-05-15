@@ -10,7 +10,7 @@ import 'package:tuple/tuple.dart';
 //表名
 const String myTable = 'myTable';
 const String infoTable = 'infoTable';
-const String genreTable = 'genreTable';
+//const String genreTable = 'genreTable';
 
 class ProjectDatabase {
   ProjectDatabase._init();
@@ -328,6 +328,33 @@ class ProjectDatabase {
     s.map((json) => SingleMovie.fromJson(json)).toList();
     return tmp;
   }
+
+
+  //genreInfo方法
+  Future<GenreInfo> GE_add(GenreInfo genre) async {
+    final db = await _instance.database;
+    try {
+      final id = await db.insert('genreInfo', genre.toJson());
+      genre.id = id; // 确保更新对象的 id 属性
+      return genre;
+    } catch (e) {
+      print('An error occurred while inserting a genre: ${genre.genreId1}');
+      return genre; // 抛出一个自定义的错误
+    }
+  }
+  //genreTalbe方法
+  Future<Genre> GT_add(Genre genre) async {
+    final db = await _instance.database;
+    try {
+      final id = await db.insert('genreTable', genre.toJson());
+      genre.id = id; // 确保更新对象的 id 属性
+      return genre;
+    } catch (e) {
+      print('An error occurred while inserting a genre: ${genre.genre}');
+      return genre; // 抛出一个自定义的错误
+    }
+  }
+
 
 
 }

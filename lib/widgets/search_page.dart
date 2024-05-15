@@ -6,9 +6,8 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'movie_page.dart';
-import 'package:tracker/page/discover_page.dart';
 import 'package:tracker/utils/database.dart';
-import '../utils/fetch_data.dart';
+import 'package:tracker/utils/data_function.dart';
 
 class SearchBarView extends StatefulWidget {
   const SearchBarView({super.key});
@@ -143,21 +142,6 @@ class MovieListCard extends StatelessWidget {
     String query =
         "update myTable set searchDate='${date.toString()}' where tmdbId=${movie.tmdbId}";
     ProjectDatabase().sudoQuery(query);
-  }
-
-  Future<void> createTables(SingleMovie movie) async {
-    final media = MyMedia(
-      tmdbId: movie.tmdbId,
-      mediaType: "movie",
-      watchStatus: "unwatched",
-      watchTimes: 0,
-      myRating: 0.0,
-      myReview: '',
-    );
-    await ProjectDatabase().SI_add(movie);
-    await ProjectDatabase().MM_add(media);
-    await Add_country_runtime_genre(movie);
-    await addSearchDate(movie);
   }
 
   @override

@@ -7,7 +7,7 @@ import '../utils/data_structure.dart';
 import '../widgets/search_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../cache_data/cachedata.dart';
-import '/utils/database.dart';
+import 'package:tracker/utils/data_function.dart';
 
 // 这里使用了GetX状态库，不然无限滚动实现不了，太难了
 class Controller extends GetxController {
@@ -144,20 +144,6 @@ class MovieCard extends StatelessWidget {
   SingleMovie movie;
 
   MovieCard({super.key, required this.movie});
-
-  Future<void> createTables(SingleMovie movie) async {
-    final media = MyMedia(
-      tmdbId: movie.tmdbId,
-      mediaType: "movie",
-      watchStatus: "unwatched",
-      watchTimes: 0,
-      myRating: 0.0,
-      myReview: '',
-    );
-    await ProjectDatabase().SI_add(movie);
-    await ProjectDatabase().MM_add(media);
-    await Add_country_runtime_genre(movie);
-  }
 
   @override
   Widget build(BuildContext context) {
