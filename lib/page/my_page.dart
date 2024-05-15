@@ -412,13 +412,6 @@ class ratingMovieListCard extends StatelessWidget {
                 spacing: 5.0, // 设置水平间距
                 alignment: WrapAlignment.start,
                 children: <Widget>[
-                  const Text(
-                    '我的评分',
-                    style: TextStyle(
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
                   Padding(
                     // 史山。不知道为什么Wrap()会导致俩元素不在一行。Row()就没有这个问题。
                     padding: const EdgeInsets.only(top: 0.0),
@@ -458,31 +451,22 @@ class ratingMovieListCard extends StatelessWidget {
           ),
           title: Text(
             movie.title!,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '上映日期: ${movie.releaseDate}',
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                    Text(
-                      'TMDB评分: ${movie.voteAverage} (${movie.voteCount})',
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                ratingCardStatic(),
-              ]),
+              Text(
+                '上映日期: ${movie.releaseDate}',
+                style: const TextStyle(fontSize: 12),
+              ),
+              Text(
+                'TMDB评分: ${movie.voteAverage} (${movie.voteCount})',
+                style: const TextStyle(fontSize: 12),
+              ),
+              ratingCardStatic(),
             ],
+
           ),
         ),
       ),

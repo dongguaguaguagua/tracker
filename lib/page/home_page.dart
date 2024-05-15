@@ -17,17 +17,18 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: RichText(
-          text: const TextSpan(
-            style: TextStyle(color: Colors.white, fontSize: 20,fontWeight: FontWeight.bold,),
-            text: '我的观影记录',
+        backgroundColor: Colors.transparent, // 选择一个主题颜色
+        elevation: 0, // 阴影强度
+        title: const Text(
+          "我的观影记录", // 标题文本
+          style: TextStyle(
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
         ),
-        toolbarHeight: 50,
-        backgroundColor: Colors.purple,
-        elevation: 10,
       ),
-      extendBodyBehindAppBar: true,
+      extendBodyBehindAppBar: false,
       body: SingleChildScrollView(
         child: FutureBuilder(
           future: GetHistory(),
@@ -39,7 +40,7 @@ class HomePage extends StatelessWidget {
               return Container(
                 child: Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 150),
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 80),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

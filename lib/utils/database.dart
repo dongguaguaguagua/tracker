@@ -29,6 +29,7 @@ class ProjectDatabase {
   Future<Database> _initDB(String filePath) async {
     sqfliteFfiInit();
     final dbPath = await databaseFactory.getDatabasesPath();
+    print(dbPath);
     final path = join(dbPath, filePath);
     return await databaseFactory.openDatabase(
       path,
@@ -320,7 +321,7 @@ class ProjectDatabase {
   Future<List<SingleMovie>> getwantwatchdata() async {
     final db = await _instance.database;
     String querywantwatch =
-        "select info.* from infoTable info,myTable mt where info.tmdbId=mt.tmdbId and mt.wantToWatchDate!='' order by mt.wantToWatchDate DESC";
+        "select info.* from infoTable info,myTable mt where info.tmdbId=mt.tmdbId and mt.watchStatus='wanttowatch' order by mt.wantToWatchDate DESC";
     final s = await db.rawQuery(querywantwatch);
 
     List<SingleMovie> tmp =
