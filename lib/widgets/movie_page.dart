@@ -93,6 +93,7 @@ class _MoviePageState extends State<MoviePage> {
   Color movieRatingTextColor = Colors.black;
   List<Map<String, dynamic>> casts = [];
   List<Map<String, dynamic>> keywords = [];
+  String myReview = "";
 
   @override
   void initState() {
@@ -127,6 +128,7 @@ class _MoviePageState extends State<MoviePage> {
       currentRating = media.myRating ?? 0.0;
       casts = tmpCasts;
       keywords = tmpKeywords;
+      myReview = media.myReview ?? '';
     });
   }
 
@@ -288,9 +290,9 @@ class _MoviePageState extends State<MoviePage> {
               ],
             ),
             const SizedBox(height: 10.0),
-            const Text(
-              '这是部很棒的电影 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-              style: TextStyle(
+            Text(
+                myReview.toString(),
+                style: TextStyle(
                 fontSize: 16.0,
               ),
             ),
@@ -578,6 +580,11 @@ class _MoviePageState extends State<MoviePage> {
     await ProjectDatabase().updateMedia(media);
   }
 
+  void alterReview(String review, MyMedia media) async {
+    media.myReview = review;
+    await ProjectDatabase().updateMedia(media);
+  }
+
   void alterwantoWatch(bool wanttoWatch, MyMedia media) async {
     DateTime date = DateTime.now();
     media.wantToWatchDate = wanttoWatch ? date : null;
@@ -635,8 +642,23 @@ class _MoviePageState extends State<MoviePage> {
       builder: (BuildContext context) {
         return buildSeenSheetContent(context, media);
       },
-    ).then((value) {
+    ).then((value) async{
       // Sheet 关闭后执行的操作
+      final result = await ProjectDatabase()
+        .sudoQuery('select * from myTable where tmdbId=${widget.movie.tmdbId}');
+      int id = result[0]['id'];
+      MyMedia media = await ProjectDatabase().MM_read_id(id);
+      //myRevie变成退出前的评论了
+      setState(() {
+          alterReview(myReview, media); //将myTable里该电影记录观看日期进行修改
+        });
+
+      //
+      // final result1 = await ProjectDatabase()
+      //   .sudoQuery('select * from myTable where tmdbId=${widget.movie.tmdbId}');
+      // int id1 = result1[0]['id'];
+      // MyMedia media1 = await ProjectDatabase().MM_read_id(id);
+      // print(media1.myReview);
       // TODO: 保存评论和评分数据
     });
   }
@@ -673,8 +695,7 @@ class _MoviePageState extends State<MoviePage> {
             const SizedBox(height: 5),
             ratingCard(),
             const SizedBox(height: 20),
-            // 评论文本框
-            const Expanded(
+            Expanded(
               child: TextField(
                 maxLines: null, // 设置为null表示可以无限制输入多行文本
                 minLines: 5, // 最少5行
@@ -682,8 +703,18 @@ class _MoviePageState extends State<MoviePage> {
                   hintText: '说说你看过之后的感受吧～',
                   border: OutlineInputBorder(),
                 ),
+                onChanged: (String newValue) {
+                  myReview = newValue;
+                },
               ),
+              // ElevatedButton(
+              //   child: Text('Submit'),
+              //   onPressed: () {
+              //     // 这里我们假设用户提交的数据是他们输入的评论
+              //     Navigator.pop(context, _controller.text);},
+              //   ),
             ),
+
             const SizedBox(height: 20),
             // 删除评分
             TextButton(
